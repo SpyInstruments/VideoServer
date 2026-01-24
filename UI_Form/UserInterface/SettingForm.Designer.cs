@@ -33,16 +33,21 @@
             this.btSetDetectionLevel = new System.Windows.Forms.Button();
             this.lbDetectionLevel = new System.Windows.Forms.Label();
             this.gbGlobalPath = new System.Windows.Forms.GroupBox();
+            this.rtbDiskInfo = new System.Windows.Forms.RichTextBox();
             this.tbPath = new System.Windows.Forms.TextBox();
             this.btSetDiskPath = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.lbDisk = new System.Windows.Forms.Label();
             this.cbDisk = new System.Windows.Forms.ComboBox();
             this.cbxGlobalPath = new System.Windows.Forms.CheckBox();
-            this.rtbDiskInfo = new System.Windows.Forms.RichTextBox();
+            this.gbCamers = new System.Windows.Forms.GroupBox();
+            this.tbSettingFile = new System.Windows.Forms.TextBox();
+            this.btSave = new System.Windows.Forms.Button();
+            this.btLoad = new System.Windows.Forms.Button();
             this.dtbDetectionLevel = new DoubleTextBox();
             this.gbMotionDetection.SuspendLayout();
             this.gbGlobalPath.SuspendLayout();
+            this.gbCamers.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbMotionDetection
@@ -90,6 +95,18 @@
             this.gbGlobalPath.Size = new System.Drawing.Size(460, 236);
             this.gbGlobalPath.TabIndex = 1;
             this.gbGlobalPath.TabStop = false;
+            // 
+            // rtbDiskInfo
+            // 
+            this.rtbDiskInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbDiskInfo.Location = new System.Drawing.Point(9, 110);
+            this.rtbDiskInfo.Name = "rtbDiskInfo";
+            this.rtbDiskInfo.ReadOnly = true;
+            this.rtbDiskInfo.Size = new System.Drawing.Size(445, 120);
+            this.rtbDiskInfo.TabIndex = 7;
+            this.rtbDiskInfo.Text = "";
             // 
             // tbPath
             // 
@@ -149,17 +166,44 @@
             this.cbxGlobalPath.UseVisualStyleBackColor = true;
             this.cbxGlobalPath.CheckedChanged += new System.EventHandler(this.cbxGlobalPath_CheckedChanged);
             // 
-            // rtbDiskInfo
+            // gbCamers
             // 
-            this.rtbDiskInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rtbDiskInfo.Location = new System.Drawing.Point(9, 110);
-            this.rtbDiskInfo.Name = "rtbDiskInfo";
-            this.rtbDiskInfo.ReadOnly = true;
-            this.rtbDiskInfo.Size = new System.Drawing.Size(445, 120);
-            this.rtbDiskInfo.TabIndex = 7;
-            this.rtbDiskInfo.Text = "";
+            this.gbCamers.Controls.Add(this.btSave);
+            this.gbCamers.Controls.Add(this.btLoad);
+            this.gbCamers.Location = new System.Drawing.Point(12, 322);
+            this.gbCamers.Name = "gbCamers";
+            this.gbCamers.Size = new System.Drawing.Size(461, 61);
+            this.gbCamers.TabIndex = 2;
+            this.gbCamers.TabStop = false;
+            this.gbCamers.Text = "Файл з камерами";
+            // 
+            // tbSettingFile
+            // 
+            this.tbSettingFile.Enabled = false;
+            this.tbSettingFile.Location = new System.Drawing.Point(22, 347);
+            this.tbSettingFile.Name = "tbSettingFile";
+            this.tbSettingFile.Size = new System.Drawing.Size(252, 22);
+            this.tbSettingFile.TabIndex = 7;
+            // 
+            // btSave
+            // 
+            this.btSave.Location = new System.Drawing.Point(369, 23);
+            this.btSave.Name = "btSave";
+            this.btSave.Size = new System.Drawing.Size(85, 27);
+            this.btSave.TabIndex = 4;
+            this.btSave.Text = "Зберегти";
+            this.btSave.UseVisualStyleBackColor = true;
+            this.btSave.Click += new System.EventHandler(this.btSave_Click);
+            // 
+            // btLoad
+            // 
+            this.btLoad.Location = new System.Drawing.Point(267, 23);
+            this.btLoad.Name = "btLoad";
+            this.btLoad.Size = new System.Drawing.Size(96, 27);
+            this.btLoad.TabIndex = 1;
+            this.btLoad.Text = "Загрузити";
+            this.btLoad.UseVisualStyleBackColor = true;
+            this.btLoad.Click += new System.EventHandler(this.btLoad_Click);
             // 
             // dtbDetectionLevel
             // 
@@ -176,7 +220,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SlateGray;
-            this.ClientSize = new System.Drawing.Size(484, 322);
+            this.ClientSize = new System.Drawing.Size(484, 397);
+            this.Controls.Add(this.tbSettingFile);
+            this.Controls.Add(this.gbCamers);
             this.Controls.Add(this.gbGlobalPath);
             this.Controls.Add(this.gbMotionDetection);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -192,7 +238,9 @@
             this.gbMotionDetection.PerformLayout();
             this.gbGlobalPath.ResumeLayout(false);
             this.gbGlobalPath.PerformLayout();
+            this.gbCamers.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -210,5 +258,9 @@
         private System.Windows.Forms.CheckBox cbxGlobalPath;
         private System.Windows.Forms.RichTextBox rtbDiskInfo;
         private DoubleTextBox dtbDetectionLevel;
+        private System.Windows.Forms.GroupBox gbCamers;
+        private System.Windows.Forms.Button btLoad;
+        private System.Windows.Forms.TextBox tbSettingFile;
+        private System.Windows.Forms.Button btSave;
     }
 }

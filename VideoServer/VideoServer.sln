@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panasonic", "..\Cameras\Pan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoServerUI", "..\UI_Form\VideoServerUI.csproj", "{900D8BE3-A403-4DCC-B4C5-C37055F1D75D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalCapture", "..\Cameras\LocalCapture\LocalCapture.csproj", "{83D610D9-FD80-4E91-93F1-775EDB3B9C42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -56,6 +58,10 @@ Global
 		{900D8BE3-A403-4DCC-B4C5-C37055F1D75D}.Debug|x64.Build.0 = Debug|x64
 		{900D8BE3-A403-4DCC-B4C5-C37055F1D75D}.Release|x64.ActiveCfg = Release|x64
 		{900D8BE3-A403-4DCC-B4C5-C37055F1D75D}.Release|x64.Build.0 = Release|x64
+		{83D610D9-FD80-4E91-93F1-775EDB3B9C42}.Debug|x64.ActiveCfg = Debug|x64
+		{83D610D9-FD80-4E91-93F1-775EDB3B9C42}.Debug|x64.Build.0 = Debug|x64
+		{83D610D9-FD80-4E91-93F1-775EDB3B9C42}.Release|x64.ActiveCfg = Release|x64
+		{83D610D9-FD80-4E91-93F1-775EDB3B9C42}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

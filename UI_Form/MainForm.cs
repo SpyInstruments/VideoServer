@@ -51,10 +51,22 @@ namespace VideoServer
             _setting = new XmlDocument();
             _setting.Load(filePath);
 
-            _setting = new XmlDocument();
-
-            _setting.Load(appPath + "\\Setting.xml");
             _camers =  new CameraCollection();
+
+            settingForm = new VideoServer.UserInterface.SettingForm();
+            settingForm.OnSaveSettingFile += SettingForm_OnSaveSettingFile;
+            settingForm.OnLoadSettingFile += SettingForm_OnLoadSettingFile;
+        }
+
+        private void SettingForm_OnLoadSettingFile(object sender, string path)
+        {
+            _setting?.Load(path);
+            UpdateTree();
+        }
+
+        private void SettingForm_OnSaveSettingFile(object sender, string path)
+        {
+            _setting?.Save(path);
         }
 
         void MainForm_MouseClick(object sender, MouseEventArgs e)
@@ -95,7 +107,6 @@ namespace VideoServer
         {
             ShowView();
         }
-
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -281,8 +292,6 @@ namespace VideoServer
         {
             try
             {
-                if (settingForm == null)
-                    settingForm = new VideoServer.UserInterface.SettingForm();
 
                 settingForm.ShowDialog();
 

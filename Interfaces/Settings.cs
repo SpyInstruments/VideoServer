@@ -5,7 +5,7 @@ namespace Interfaces
     public static class Settings
     {
         static double alarmLevel = 0.03;
-
+        static string settingFile = "./xml/Setting.xml";
         /// <summary>
         /// Alarm Level
         /// </summary>
@@ -13,6 +13,15 @@ namespace Interfaces
         {
             get { return alarmLevel; }
             set { alarmLevel = value; }
+        }
+
+        /// <summary>
+        /// SettingFile
+        /// </summary>
+        public static string SettingFile
+        {
+            get { return settingFile; }
+            set { settingFile = value; }
         }
 
         /// <summary>
@@ -68,6 +77,7 @@ namespace Interfaces
                 GlobalPath = key.GetValue("GlobalPath", GlobalPath ?? string.Empty).ToString();
             }
         }
+
     }
 
 }

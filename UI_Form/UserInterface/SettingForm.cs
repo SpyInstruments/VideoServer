@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 
@@ -7,6 +8,12 @@ namespace VideoServer.UserInterface
 {
     public partial class SettingForm : Form
     {
+        public delegate void SettingUpdate(object sender, string path);
+
+        public event SettingUpdate OnSaveSettingFile;
+
+        public event SettingUpdate OnLoadSettingFile;
+
         public SettingForm()
         {
             InitializeComponent();
@@ -133,5 +140,42 @@ namespace VideoServer.UserInterface
         }
         #endregion
 
+        #region Settting file
+        private void btLoad_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "XML files (*.xml)|*.xml";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    this?.OnLoadSettingFile(this, ofd.FileName);
+                    tbSettingFile.Text = ofd.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = "XML files (*.xml)|*.xml";
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    this?.OnSaveSettingFile(this, sfd.FileName);
+                    tbSettingFile.Text = sfd.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        #endregion
     }
 }
