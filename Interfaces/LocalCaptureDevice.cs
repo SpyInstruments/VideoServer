@@ -31,7 +31,7 @@ namespace Interfaces
                 stopEvent = new ManualResetEvent(false);
 
                 // create and start new thread
-                thread = new Thread(new ThreadStart(WorkerThread));
+                thread = new Thread(WorkerThread);
                 thread.Name = cameraAdapter.Connection;
                 thread.Start();
             }
@@ -190,8 +190,6 @@ namespace Interfaces
         protected void OnNewFrame(Bitmap image)
         {
             framesReceived++;
-            //if ((!stopEvent.WaitOne(0, true)) && (NewFrame != null))
-            //    NewFrame(this, new CameraEventArgs(image));
 
             if (cameraAdapter.ISourceAdaptee.SaveToFile)
             {
@@ -199,7 +197,7 @@ namespace Interfaces
                 {
                     if (DetectMotion(ref image))
                     {
-                        //SaveToFile(image);
+                        SaveToFileJpeg(image);
                     }
                     else
                     {
@@ -208,7 +206,7 @@ namespace Interfaces
                 }
                 else
                 {
-                    //SaveToFile(image);
+                    SaveToFileJpeg(image);
                 }
 
             }
@@ -274,7 +272,6 @@ namespace Interfaces
 
                     img.UnlockBits(bmData);
 
-                    // викликаємо подію
                     parent.OnNewFrame((Bitmap)img.Clone());
                 }
 
