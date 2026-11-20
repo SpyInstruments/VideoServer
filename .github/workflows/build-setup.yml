@@ -2,11 +2,23 @@
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Attach installer to this existing release tag (e.g. v1.1.0). Leave empty to only build.'
+        required: false
+        default: ''
   push:
     branches:
       - ci-setup
     tags:
       - 'v*'
+
+# default GITHUB_TOKEN in org repos is read-only; release upload needs write,
+# build provenance attestation needs id-token + attestations
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
 
 jobs:
   build:
@@ -96,21 +108,44 @@ jobs:
           if ($missing.Count) { Write-Host ("::error title=Missing in MSI::" + ($missing -join ', ')); exit 1 }
           Write-Host "All required files are in the installer"
 
+      # Collect release files in one place so checksums, attestation and release use the same bytes
+      - name: Collect installer and checksums
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          foreach ($name in 'Setup.msi', 'setup.exe') {
+            $f = Get-ChildItem -Recurse -File -Filter $name | Where-Object FullName -match '\\Release\\' | Select-Object -First 1
+            if (-not $f) { Write-Host "::error title=Installer file not found::$name"; exit 1 }
+            Copy-Item $f.FullName dist/
+          }
+          # sha256sum-compatible format: "<hash>  <file>"
+          Get-ChildItem dist -File | Sort-Object Name | ForEach-Object {
+            "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name
+          } | Set-Content -Encoding ascii dist/SHA256SUMS.txt
+          Get-Content dist/SHA256SUMS.txt
+
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
           name: installer
-          path: |
-            **/Release/Setup.msi
-            **/Release/setup.exe
+          path: dist/
 
+      # Signed statement that these files were built by this workflow from this commit.
+      # Verify: gh attestation verify Setup.msi -R SpyInstruments/VideoServer
+      - name: Attest build provenance
+        if: startsWith(github.ref, 'refs/tags/') || inputs.release_tag != ''
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            dist/Setup.msi
+            dist/setup.exe
 
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') || inputs.release_tag != ''
+        uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
           files: |
-            **/Release/Setup.msi
-            **/Release/setup.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN}}
+            dist/Setup.msi
+            dist/setup.exe
+            dist/SHA256SUMS.txt
