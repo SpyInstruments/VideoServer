@@ -11,6 +11,7 @@ namespace DLink
 
         string sourcePath = "";
         XmlNode node = null;
+        string geolocationXml = ""; // keep <Geolocation> tag unchanged
 
         public SetupPage()
         {
@@ -41,12 +42,15 @@ namespace DLink
                "<Password>" + tbPassword.Text + "</Password>" +
                "<SourceType>" + cbTypeStream.Text + "</SourceType>" +
                "<Resolution>" + cbProfile.Text + "</Resolution>" +
-               "<FrameFrequncy>" + cbPeriod.Text + "</FrameFrequncy>";
+               "<FrameFrequncy>" + cbPeriod.Text + "</FrameFrequncy>" +
+               geolocationXml;
 
         }
 
         public void SetConfiguration(XmlNode node)
         {
+            geolocationXml = node.SelectSingleNode("Geolocation")?.OuterXml ?? "";
+
 
             if (node.SelectSingleNode("CameraName") != null)
                 tbName.Text = node.SelectSingleNode("CameraName").InnerText;

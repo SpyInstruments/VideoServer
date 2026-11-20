@@ -11,6 +11,7 @@ namespace axis
         string sourcePath = "";
         string description = "Axis camera";
         XmlNode node = null;
+        string geolocationXml = ""; // keep <Geolocation> tag unchanged
 
         public SetupPage()
         {
@@ -55,11 +56,14 @@ namespace axis
                "<Login>" + tbLogin.Text + "</Login>" +
                "<Password>" + tbPassword.Text + "</Password>" +
                "<SourceType>" + cbTypeStream.Text + "</SourceType>" +
-               "<Resolution>" + cbResolution.Text + "</Resolution>";
+               "<Resolution>" + cbResolution.Text + "</Resolution>" +
+               geolocationXml;
         }
 
         public void SetConfiguration(XmlNode node)
         {
+            geolocationXml = node.SelectSingleNode("Geolocation")?.OuterXml ?? "";
+
             if (node.SelectSingleNode("CameraName") != null)
                 tbName.Text = node.SelectSingleNode("CameraName").InnerText;
 

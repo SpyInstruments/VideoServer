@@ -46,6 +46,12 @@
             this.lbServerYOLO = new System.Windows.Forms.Label();
             this.lbDescription = new System.Windows.Forms.Label();
             this.rtbDescription = new System.Windows.Forms.RichTextBox();
+            this.lbGeolocation = new System.Windows.Forms.Label();
+            this.lbLatitude = new System.Windows.Forms.Label();
+            this.tbLatitude = new System.Windows.Forms.TextBox();
+            this.lbLongitude = new System.Windows.Forms.Label();
+            this.tbLongitude = new System.Windows.Forms.TextBox();
+            this.btMap = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label6
@@ -254,13 +260,84 @@
             this.rtbDescription.Size = new System.Drawing.Size(291, 53);
             this.rtbDescription.TabIndex = 44;
             this.rtbDescription.Text = "";
-            // 
+            //
+            // lbGeolocation
+            //
+            this.lbGeolocation.AutoSize = true;
+            this.lbGeolocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lbGeolocation.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.lbGeolocation.Location = new System.Drawing.Point(252, 205);
+            this.lbGeolocation.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbGeolocation.Name = "lbGeolocation";
+            this.lbGeolocation.Size = new System.Drawing.Size(100, 17);
+            this.lbGeolocation.TabIndex = 45;
+            this.lbGeolocation.Text = "Геолокація:";
+            //
+            // lbLatitude
+            //
+            this.lbLatitude.AutoSize = true;
+            this.lbLatitude.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lbLatitude.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.lbLatitude.Location = new System.Drawing.Point(252, 233);
+            this.lbLatitude.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbLatitude.Name = "lbLatitude";
+            this.lbLatitude.Size = new System.Drawing.Size(60, 17);
+            this.lbLatitude.TabIndex = 46;
+            this.lbLatitude.Text = "Широта:";
+            //
+            // tbLatitude
+            //
+            this.tbLatitude.Location = new System.Drawing.Point(325, 230);
+            this.tbLatitude.Margin = new System.Windows.Forms.Padding(4);
+            this.tbLatitude.Name = "tbLatitude";
+            this.tbLatitude.Size = new System.Drawing.Size(88, 22);
+            this.tbLatitude.TabIndex = 47;
+            this.tbLatitude.TextChanged += new System.EventHandler(this.tbGeolocation_TextChanged);
+            //
+            // lbLongitude
+            //
+            this.lbLongitude.AutoSize = true;
+            this.lbLongitude.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lbLongitude.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.lbLongitude.Location = new System.Drawing.Point(252, 263);
+            this.lbLongitude.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbLongitude.Name = "lbLongitude";
+            this.lbLongitude.Size = new System.Drawing.Size(65, 17);
+            this.lbLongitude.TabIndex = 48;
+            this.lbLongitude.Text = "Довгота:";
+            //
+            // tbLongitude
+            //
+            this.tbLongitude.Location = new System.Drawing.Point(325, 260);
+            this.tbLongitude.Margin = new System.Windows.Forms.Padding(4);
+            this.tbLongitude.Name = "tbLongitude";
+            this.tbLongitude.Size = new System.Drawing.Size(88, 22);
+            this.tbLongitude.TabIndex = 49;
+            this.tbLongitude.TextChanged += new System.EventHandler(this.tbGeolocation_TextChanged);
+            //
+            // btMap
+            //
+            this.btMap.Location = new System.Drawing.Point(325, 200);
+            this.btMap.Margin = new System.Windows.Forms.Padding(4);
+            this.btMap.Name = "btMap";
+            this.btMap.Size = new System.Drawing.Size(88, 26);
+            this.btMap.TabIndex = 50;
+            this.btMap.Text = "Мапа";
+            this.btMap.UseVisualStyleBackColor = true;
+            this.btMap.Click += new System.EventHandler(this.btMap_Click);
+            //
             // SetupPage
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.Gray;
+            this.Controls.Add(this.btMap);
+            this.Controls.Add(this.tbLongitude);
+            this.Controls.Add(this.lbLongitude);
+            this.Controls.Add(this.tbLatitude);
+            this.Controls.Add(this.lbLatitude);
+            this.Controls.Add(this.lbGeolocation);
             this.Controls.Add(this.rtbDescription);
             this.Controls.Add(this.lbServerYOLO);
             this.Controls.Add(this.mtbUrlYOLO);
@@ -307,5 +384,11 @@
         private System.Windows.Forms.Label lbServerYOLO;
         private System.Windows.Forms.Label lbDescription;
         private System.Windows.Forms.RichTextBox rtbDescription;
+        private System.Windows.Forms.Label lbGeolocation;
+        private System.Windows.Forms.Label lbLatitude;
+        private System.Windows.Forms.TextBox tbLatitude;
+        private System.Windows.Forms.Label lbLongitude;
+        private System.Windows.Forms.TextBox tbLongitude;
+        private System.Windows.Forms.Button btMap;
     }
 }

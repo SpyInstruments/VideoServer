@@ -14,6 +14,7 @@ namespace LocalCaptureDevice
 
 
         XmlNode node = null;
+        string geolocationXml = ""; // keep <Geolocation> tag unchanged
 
         public SetupPage()
         {
@@ -70,11 +71,14 @@ namespace LocalCaptureDevice
               "<FileDirectoryPath>" + tbPath.Text + "</FileDirectoryPath>" +
               "<Url>" + cbCaptureDevice.Text + "</Url>" +
               "<SourceType>" + cbTypeStream.Text + "</SourceType>" +
-              "<FrameFrequncy>" + cbPeriod.Text + "</FrameFrequncy>";
+              "<FrameFrequncy>" + cbPeriod.Text + "</FrameFrequncy>" +
+               geolocationXml;
         }
 
         public void SetConfiguration(XmlNode node)
         {
+            geolocationXml = node.SelectSingleNode("Geolocation")?.OuterXml ?? "";
+
             if (node.SelectSingleNode("CameraName") != null)
                 tbName.Text = node.SelectSingleNode("CameraName").InnerText;
 

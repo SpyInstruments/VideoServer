@@ -48,7 +48,28 @@ namespace IPCamera
                "<SourceType>" + cbTypeStream.Text + "</SourceType>" +
                "<UseYOLO>" + cbxUseYOLO.Checked+ "</UseYOLO>" +
                "<UrlYOLO>" + mtbUrlYOLO.Text + "</UrlYOLO>" +
-               "<ObjectsYOLO>" + String.Join(";", objectsToDetect) + "</ObjectsYOLO>";
+               "<ObjectsYOLO>" + String.Join(";", objectsToDetect) + "</ObjectsYOLO>" +
+               GeolocationXml();
+        }
+
+        /// <summary>
+        /// Build &lt;Geolocation&gt; tag from UI. Empty string if coordinates are not set or invalid
+        /// </summary>
+        string GeolocationXml()
+        {
+            double? lat = CameraAdapter.ParseCoordinate(tbLatitude.Text);
+            double? lon = CameraAdapter.ParseCoordinate(tbLongitude.Text);
+
+            if (lat == null || lon == null ||
+                lat < -90 || lat > 90 ||
+                lon < -180 || lon > 180)
+                return "";
+
+            var ci = System.Globalization.CultureInfo.InvariantCulture;
+            return "<Geolocation>" +
+                   "<Latitude>" + lat.Value.ToString("0.######", ci) + "</Latitude>" +
+                   "<Longitude>" + lon.Value.ToString("0.######", ci) + "</Longitude>" +
+                   "</Geolocation>";
         }
 
         public void SetConfiguration(XmlNode node)
@@ -77,6 +98,9 @@ namespace IPCamera
 
             if (node.SelectSingleNode("UrlYOLO") != null)
                 mtbUrlYOLO.Text = node.SelectSingleNode("UrlYOLO").InnerText;
+
+            tbLatitude.Text = node.SelectSingleNode("Geolocation/Latitude")?.InnerText ?? "";
+            tbLongitude.Text = node.SelectSingleNode("Geolocation/Longitude")?.InnerText ?? "";
 
             if (node.SelectSingleNode("ObjectsYOLO") != null)
             {
@@ -255,6 +279,29 @@ namespace IPCamera
         {
             if (StateChanged != null)
                 StateChanged(this, new EventArgs());
+        }
+
+        private void tbGeolocation_TextChanged(object sender, EventArgs e)
+        {
+            if (StateChanged != null)
+                StateChanged(this, new EventArgs());
+        }
+
+        private void btMap_Click(object sender, EventArgs e)
+        {
+            double? lat = CameraAdapter.ParseCoordinate(tbLatitude.Text);
+            double? lon = CameraAdapter.ParseCoordinate(tbLongitude.Text);
+
+            using (var map = new MapForm(tbName.Text, lat, lon))
+            {
+                if (map.ShowDialog(FindForm()) == DialogResult.OK &&
+                    map.Latitude.HasValue && map.Longitude.HasValue)
+                {
+                    var ci = System.Globalization.CultureInfo.InvariantCulture;
+                    tbLatitude.Text = map.Latitude.Value.ToString("0.######", ci);
+                    tbLongitude.Text = map.Longitude.Value.ToString("0.######", ci);
+                }
+            }
         }
         #endregion
 

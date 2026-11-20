@@ -165,6 +165,48 @@ namespace Interfaces
                 return sourceType;
             }
         }
+
+        double? latitude = null;
+        /// <summary>
+        /// Latitude (WGS84, degrees). null if not set
+        /// </summary>
+        public double? Latitude
+        {
+            get
+            {
+                return latitude;
+            }
+        }
+
+        double? longitude = null;
+        /// <summary>
+        /// Longitude (WGS84, degrees). null if not set
+        /// </summary>
+        public double? Longitude
+        {
+            get
+            {
+                return longitude;
+            }
+        }
+
+        /// <summary>
+        /// Parse coordinate from XML text (accepts '.' or ',' as decimal separator)
+        /// </summary>
+        public static double? ParseCoordinate(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return null;
+
+            double value;
+            if (double.TryParse(text.Trim().Replace(',', '.'),
+                                System.Globalization.NumberStyles.Float,
+                                System.Globalization.CultureInfo.InvariantCulture,
+                                out value))
+                return value;
+
+            return null;
+        }
         #endregion
 
         ISourceAdaptee iSourceAdaptee = null;
@@ -221,6 +263,11 @@ namespace Interfaces
             if (node.SelectSingleNode("UseYOLO") != null)
                 useYOLO = bool.Parse(node.SelectSingleNode("UseYOLO").InnerText);
 
+            if (node.SelectSingleNode("Geolocation") != null)
+            {
+                latitude = ParseCoordinate(node.SelectSingleNode("Geolocation/Latitude")?.InnerText);
+                longitude = ParseCoordinate(node.SelectSingleNode("Geolocation/Longitude")?.InnerText);
+            }
 
             if (node.SelectSingleNode("SourceType") != null)
             {

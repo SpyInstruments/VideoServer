@@ -17,6 +17,28 @@
 				<xs:element name="Quality" type="xs:string" minOccurs="0"/>
 				<xs:element name="Resolution" type="xs:string" minOccurs="0"/>
 				<xs:element name="FrameFrequncy" type="xs:string" minOccurs="0"/>
+				<xs:element name="Geolocation" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Latitude">
+								<xs:simpleType>
+									<xs:restriction base="xs:double">
+										<xs:minInclusive value="-90"/>
+										<xs:maxInclusive value="90"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Longitude">
+								<xs:simpleType>
+									<xs:restriction base="xs:double">
+										<xs:minInclusive value="-180"/>
+										<xs:maxInclusive value="180"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 			<xs:attribute name="CameraName" use="required"/>
 		</xs:complexType>
