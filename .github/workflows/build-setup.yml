@@ -53,11 +53,56 @@ jobs:
             Write-Error "Fix utility not found at $fixExe"
           }
 
+      # Build all C# projects first so every file referenced by Setup.vdproj exists in bin\Release
+      # (MSBuild skips the .vdproj itself with a warning - that is expected)
+      - name: Build solution (Release|x64)
+        shell: pwsh
+        run: |
+          $msbuild = & vswhere -latest -requires Microsoft.Component.MSBuild -find "MSBuild\**\Bin\amd64\MSBuild.exe" | Select-Object -First 1
+          & $msbuild "VideoServer/VideoServer.sln" /t:Build "/p:Configuration=Release;Platform=x64" /v:m /nologo
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Build Setup project (.vdproj)
         shell: cmd
         continue-on-error: true
         run: |
-          "%DEVENV_PATH%" "VideoServer/VideoServer.sln" /build "Release|x64" /project "Setup"
+          "%DEVENV_PATH%" "VideoServer/VideoServer.sln" /build "Release|x64" /project "Setup" /out "%RUNNER_TEMP%\devenv.log"
+
+      # devenv step is continue-on-error, so verify the installer really contains what we need
+      - name: Verify installer contents
+        shell: pwsh
+        run: |
+          $msi = Get-ChildItem -Recurse -Filter Setup.msi | Where-Object FullName -match '\\Release\\' | Select-Object -First 1
+          if (-not $msi) {
+            $log = Join-Path $env:RUNNER_TEMP "devenv.log"
+            $tail = if (Test-Path $log) { (Get-Content $log | Select-String 'error|warning|Build:|Building' | Select-Object -Last 15) -join '%0A' } else { 'devenv.log not found' }
+            Write-Host "::error title=Setup.msi was not built::$tail"
+            exit 1
+          }
+          Write-Host "MSI: $($msi.FullName) ($([math]::Round($msi.Length/1MB,1)) MB)"
+
+          $out = Join-Path $env:RUNNER_TEMP "msi_x"
+          Start-Process msiexec -ArgumentList "/a `"$($msi.FullName)`" /qn TARGETDIR=`"$out`"" -Wait
+          Get-ChildItem $out -Recurse -File | ForEach-Object { $_.FullName.Substring($out.Length + 1) }
+
+          $required = @(
+            'VideoServer.exe', 'VideoServer.exe.config', 'libvlc.zip', 'LibVLCSharp.dll',
+            'Interfaces.dll', 'IPCamera.dll', 'axis.dll', 'DLink.dll', 'LocalCapture.dll', 'Panasonic.dll',
+            'AForge.dll', 'AForge.Video.dll', 'AForge.Video.DirectShow.dll',
+            'Microsoft.Web.WebView2.Core.dll', 'Microsoft.Web.WebView2.WinForms.dll',
+            'runtimes\win-x64\native\WebView2Loader.dll'
+          )
+          $missing = @($required | Where-Object { $r = $_; -not (Get-ChildItem $out -Recurse -File | Where-Object { $_.FullName.EndsWith('\' + $r) }) })
+          if ($missing.Count) { Write-Host ("::error title=Missing in MSI::" + ($missing -join ', ')); exit 1 }
+          Write-Host "All required files are in the installer"
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer
+          path: |
+            **/Release/Setup.msi
+            **/Release/setup.exe
 
 
       - name: Create GitHub Release
