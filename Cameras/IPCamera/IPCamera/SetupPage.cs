@@ -16,12 +16,6 @@ namespace IPCamera
         public SetupPage()
         {
             InitializeComponent();
-            mtbUrlYOLO.ValidatingType = typeof(System.Net.IPAddress);
-
-            // YOLO now runs inside the application (ONNX Runtime) - the server address is not used.
-            // The value is still saved to keep old settings files unchanged.
-            mtbUrlYOLO.Visible = false;
-            lbServerYOLO.Visible = false;
         }
 
         #region ISetupPage Members
@@ -52,7 +46,6 @@ namespace IPCamera
                "<Url>" + tbUrl.Text + "</Url>" +
                "<SourceType>" + cbTypeStream.Text + "</SourceType>" +
                "<UseYOLO>" + cbxUseYOLO.Checked+ "</UseYOLO>" +
-               "<UrlYOLO>" + mtbUrlYOLO.Text + "</UrlYOLO>" +
                "<ObjectsYOLO>" + String.Join(";", objectsToDetect) + "</ObjectsYOLO>" +
                GeolocationXml();
         }
@@ -100,9 +93,6 @@ namespace IPCamera
 
             if (node.SelectSingleNode("UseYOLO") != null)
                 cbxUseYOLO.Checked = bool.Parse(node.SelectSingleNode("UseYOLO").InnerText);
-
-            if (node.SelectSingleNode("UrlYOLO") != null)
-                mtbUrlYOLO.Text = node.SelectSingleNode("UrlYOLO").InnerText;
 
             tbLatitude.Text = node.SelectSingleNode("Geolocation/Latitude")?.InnerText ?? "";
             tbLongitude.Text = node.SelectSingleNode("Geolocation/Longitude")?.InnerText ?? "";
@@ -163,7 +153,6 @@ namespace IPCamera
             ip_camera.FileDirectoryPath = tbPath.Text;
             ip_camera.CameraDescription = rtbDescription.Text;
             ip_camera.YoloEnabled = cbxUseYOLO.Checked;
-            ip_camera.YoloUrl = mtbUrlYOLO.Text;
             string[] objectsToDetect = clbxObjectsYOLO.CheckedItems
                                                .Cast<object>()
                                                .Select(item => item.ToString())
@@ -320,21 +309,13 @@ namespace IPCamera
         {
             if (cbxUseYOLO.Checked)
             {
-                mtbUrlYOLO.Enabled = true;
                 clbxObjectsYOLO.Enabled = true;
                 cbxSaveMoving.Checked = false;
             }
             else
             {
-                mtbUrlYOLO.Enabled = false;
                 clbxObjectsYOLO.Enabled = false;
             }
-            if (StateChanged != null)
-                StateChanged(this, new EventArgs());
-        }
-
-        private void mtbServerYOLO_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
-        {
             if (StateChanged != null)
                 StateChanged(this, new EventArgs());
         }

@@ -40,10 +40,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.cbxUseYOLO = new System.Windows.Forms.CheckBox();
             this.clbxObjectsYOLO = new System.Windows.Forms.CheckedListBox();
-            this.mtbUrlYOLO = new System.Windows.Forms.MaskedTextBox();
             this.cbTypeStream = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.lbServerYOLO = new System.Windows.Forms.Label();
             this.lbDescription = new System.Windows.Forms.Label();
             this.rtbDescription = new System.Windows.Forms.RichTextBox();
             this.lbGeolocation = new System.Windows.Forms.Label();
@@ -191,15 +189,6 @@
             this.clbxObjectsYOLO.TabIndex = 41;
             this.clbxObjectsYOLO.SelectedIndexChanged += new System.EventHandler(this.clbxDetectedObjects_SelectedIndexChanged);
             // 
-            // mtbUrlYOLO
-            // 
-            this.mtbUrlYOLO.Location = new System.Drawing.Point(43, 250);
-            this.mtbUrlYOLO.Name = "mtbUrlYOLO";
-            this.mtbUrlYOLO.Size = new System.Drawing.Size(186, 22);
-            this.mtbUrlYOLO.TabIndex = 42;
-            this.mtbUrlYOLO.Text = "127.0.0.1:7007";
-            this.mtbUrlYOLO.MaskInputRejected += new System.Windows.Forms.MaskInputRejectedEventHandler(this.mtbServerYOLO_MaskInputRejected);
-            // 
             // cbTypeStream
             // 
             this.cbTypeStream.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -227,19 +216,6 @@
             this.label4.Size = new System.Drawing.Size(116, 17);
             this.label4.TabIndex = 34;
             this.label4.Text = "Тип відеопотоку";
-            // 
-            // lbServerYOLO
-            // 
-            this.lbServerYOLO.AutoSize = true;
-            this.lbServerYOLO.Enabled = false;
-            this.lbServerYOLO.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbServerYOLO.ForeColor = System.Drawing.SystemColors.Desktop;
-            this.lbServerYOLO.Location = new System.Drawing.Point(45, 230);
-            this.lbServerYOLO.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lbServerYOLO.Name = "lbServerYOLO";
-            this.lbServerYOLO.Size = new System.Drawing.Size(166, 17);
-            this.lbServerYOLO.TabIndex = 43;
-            this.lbServerYOLO.Text = "Шлях до  сервера YOLO";
             // 
             // lbDescription
             // 
@@ -339,8 +315,6 @@
             this.Controls.Add(this.lbLatitude);
             this.Controls.Add(this.lbGeolocation);
             this.Controls.Add(this.rtbDescription);
-            this.Controls.Add(this.lbServerYOLO);
-            this.Controls.Add(this.mtbUrlYOLO);
             this.Controls.Add(this.clbxObjectsYOLO);
             this.Controls.Add(this.cbxUseYOLO);
             this.Controls.Add(this.label6);
@@ -378,10 +352,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox cbxUseYOLO;
         private System.Windows.Forms.CheckedListBox clbxObjectsYOLO;
-        private System.Windows.Forms.MaskedTextBox mtbUrlYOLO;
         private System.Windows.Forms.ComboBox cbTypeStream;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label lbServerYOLO;
         private System.Windows.Forms.Label lbDescription;
         private System.Windows.Forms.RichTextBox rtbDescription;
         private System.Windows.Forms.Label lbGeolocation;

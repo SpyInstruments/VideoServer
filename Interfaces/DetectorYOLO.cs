@@ -118,8 +118,7 @@ namespace Interfaces
         /// <summary>
         /// Queue a frame for detection; ignored while the previous frame is still processed.
         /// </summary>
-        /// <param name="url">not used anymore (was the Python YOLO server address), kept for compatibility</param>
-        public void DetectObjects(Bitmap bitmap, string path, string fileName, string[] obj2detect, string url = null)
+        public void DetectObjects(Bitmap bitmap, string path, string fileName, string[] obj2detect)
         {
             if (bitmap == null || Interlocked.CompareExchange(ref busy, 1, 0) != 0)
                 return;

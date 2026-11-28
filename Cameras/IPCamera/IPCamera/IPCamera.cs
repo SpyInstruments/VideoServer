@@ -32,7 +32,6 @@ namespace IPCamera
         bool _saveToFile = false;
         string _fileDirectoryPath = "D:\\";
         bool _yoloEnabled = false;
-        string _yolo_url = "127.0.0.1:7007";
         string[] _yolo_targets = null;
 
         SourceTypes _sourceType = SourceTypes.M3U8;
@@ -203,18 +202,6 @@ namespace IPCamera
             }
         }
 
-        public string YoloUrl
-        {
-            get
-            {
-                return _yolo_url;
-            }
-            set
-            {
-                _yolo_url = value;
-            }
-        }
-
         public string[] YoloTargets
         {
             get
@@ -264,9 +251,6 @@ namespace IPCamera
 
             if (node.SelectSingleNode("UseYOLO") != null)
                 _yoloEnabled = bool.Parse(node.SelectSingleNode("UseYOLO").InnerText);
-
-            if (node.SelectSingleNode("UrlYOLO") != null)
-                _yolo_url = node.SelectSingleNode("UrlYOLO").InnerText;
 
             if (node.SelectSingleNode("ObjectsYOLO") != null)
             {

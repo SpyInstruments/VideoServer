@@ -120,15 +120,6 @@ namespace Interfaces
         }
 
         /// <summary>
-        ///  Yolo Url
-        /// </summary>
-        string YoloUrl
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Yolo Targets
         /// </summary>
         string[] YoloTargets

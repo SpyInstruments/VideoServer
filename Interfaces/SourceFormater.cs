@@ -137,8 +137,7 @@ namespace Interfaces
             detectorYOLO.DetectObjects( lastFrame,
                                         subPath,
                                         fileName,
-                                        cameraAdapter.ISourceAdaptee.YoloTargets,
-                                        cameraAdapter.ISourceAdaptee.YoloUrl);
+                                        cameraAdapter.ISourceAdaptee.YoloTargets);
         }
 
         protected bool DetectMotion(ref Bitmap lastFrame)
