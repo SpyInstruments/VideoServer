@@ -13,7 +13,19 @@ namespace VideoServer.UserInterface
             InitializeComponent();
             viewGrid.DragEnter += new DragEventHandler(viewGrid_DragEnter);
             viewGrid.DragDrop += new DragEventHandler(viewGrid_DragDrop);
+            VisibleChanged += AddViewForm_VisibleChanged;
+        }
 
+        // dialog is hidden (OK / Cancel / Back) - close the map too
+        private void AddViewForm_VisibleChanged(object sender, EventArgs e)
+        {
+            if (!Visible && mapForm != null && !mapForm.IsDisposed)
+                mapForm.Close();
+        }
+
+        bool IsKnownCamera(string name)
+        {
+            return !string.IsNullOrEmpty(name) && lbxCameras.Items.Contains(name.Trim());
         }
 
         private void btFinish_Click(object sender, EventArgs e)
@@ -120,7 +132,8 @@ namespace VideoServer.UserInterface
 
         void viewGrid_DragEnter(object sender, DragEventArgs de)
         {
-            if (de.Data.GetDataPresent(DataFormats.Text))
+            if (de.Data.GetDataPresent(DataFormats.Text) &&
+                IsKnownCamera(de.Data.GetData(DataFormats.Text) as string))
             {
                 de.Effect = DragDropEffects.Copy;
             }
@@ -134,10 +147,42 @@ namespace VideoServer.UserInterface
         void viewGrid_DragDrop(object sender, DragEventArgs de)
         {
             string cameraName = "";
-            cameraName = (string)de.Data.GetData(DataFormats.Text);
+            cameraName = (de.Data.GetData(DataFormats.Text) as string)?.Trim();
+            if (!IsKnownCamera(cameraName))
+                return;
             Point pt = viewGrid.PointToClient(new Point(de.X, de.Y));
             viewGrid.SetLabel(cameraName, pt);
         }
 
+        CamerasMapForm mapForm = null;
+
+        private void btMap_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (mapForm != null && !mapForm.IsDisposed)
+                {
+                    mapForm.Activate();
+                    return;
+                }
+
+                mapForm = new CamerasMapForm(_setting);
+                mapForm.FormClosed += (s, a) => mapForm = null;
+
+                // place the map next to this window, keep it on screen
+                Rectangle screen = Screen.FromControl(this).WorkingArea;
+                int x = Right;
+                if (x + mapForm.Width > screen.Right)
+                    x = Math.Max(screen.Left, screen.Right - mapForm.Width);
+                mapForm.Location = new Point(x, Math.Max(screen.Top, Top));
+
+                // owned, non-modal: user can drag cameras from the map into the grid
+                mapForm.Show(this);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

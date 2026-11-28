@@ -30,32 +30,33 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddViewForm));
-            this.panel = new System.Windows.Forms.Panel();
+            this.pnMap = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lbxCameras = new System.Windows.Forms.ListBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.viewGrid = new VideoServer.Controls.ViewGrid();
             this.panel3 = new System.Windows.Forms.Panel();
             this.btBack = new System.Windows.Forms.Button();
             this.btCancel = new System.Windows.Forms.Button();
             this.btFinish = new System.Windows.Forms.Button();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.setTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewGrid = new VideoServer.Controls.ViewGrid();
+            this.btMap = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // panel
+            // pnMap
             // 
-            this.panel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panel.BackColor = System.Drawing.SystemColors.Desktop;
-            this.panel.Location = new System.Drawing.Point(16, 6);
-            this.panel.Margin = new System.Windows.Forms.Padding(4);
-            this.panel.Name = "panel";
-            this.panel.Size = new System.Drawing.Size(101, 266);
-            this.panel.TabIndex = 2;
+            this.pnMap.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pnMap.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.pnMap.Location = new System.Drawing.Point(6, 6);
+            this.pnMap.Margin = new System.Windows.Forms.Padding(4);
+            this.pnMap.Name = "pnMap";
+            this.pnMap.Size = new System.Drawing.Size(111, 266);
+            this.pnMap.TabIndex = 2;
             // 
             // panel1
             // 
@@ -73,11 +74,11 @@
             this.lbxCameras.AllowDrop = true;
             this.lbxCameras.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lbxCameras.FormattingEnabled = true;
-            this.lbxCameras.ItemHeight = 16;
+            this.lbxCameras.ItemHeight = 25;
             this.lbxCameras.Location = new System.Drawing.Point(5, 4);
             this.lbxCameras.Margin = new System.Windows.Forms.Padding(4);
             this.lbxCameras.Name = "lbxCameras";
-            this.lbxCameras.Size = new System.Drawing.Size(129, 210);
+            this.lbxCameras.Size = new System.Drawing.Size(129, 202);
             this.lbxCameras.TabIndex = 0;
             this.lbxCameras.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lbxCameras_MouseDown);
             // 
@@ -92,23 +93,11 @@
             this.panel2.Size = new System.Drawing.Size(392, 217);
             this.panel2.TabIndex = 3;
             // 
-            // viewGrid
-            // 
-            this.viewGrid.AllowDrop = true;
-            this.viewGrid.Cols = ((short)(2));
-            this.viewGrid.Location = new System.Drawing.Point(4, 4);
-            this.viewGrid.Margin = new System.Windows.Forms.Padding(4);
-            this.viewGrid.Name = "viewGrid";
-            this.viewGrid.Rows = ((short)(2));
-            this.viewGrid.Size = new System.Drawing.Size(384, 209);
-            this.viewGrid.TabIndex = 0;
-            this.viewGrid.Text = "viewGrid1";
-            this.viewGrid.Click += new System.EventHandler(this.viewGrid_Click);
-            // 
             // panel3
             // 
             this.panel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panel3.BackColor = System.Drawing.Color.Gray;
+            this.panel3.Controls.Add(this.btMap);
             this.panel3.Controls.Add(this.btBack);
             this.panel3.Controls.Add(this.btCancel);
             this.panel3.Controls.Add(this.btFinish);
@@ -169,13 +158,41 @@
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setTimeToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(267, 28);
+            this.contextMenuStrip.Size = new System.Drawing.Size(385, 42);
             // 
             // setTimeToolStripMenuItem
             // 
             this.setTimeToolStripMenuItem.Name = "setTimeToolStripMenuItem";
-            this.setTimeToolStripMenuItem.Size = new System.Drawing.Size(266, 24);
+            this.setTimeToolStripMenuItem.Size = new System.Drawing.Size(384, 38);
             this.setTimeToolStripMenuItem.Text = "Установить график работы";
+            // 
+            // viewGrid
+            // 
+            this.viewGrid.AllowDrop = true;
+            this.viewGrid.Cols = ((short)(2));
+            this.viewGrid.Location = new System.Drawing.Point(4, 4);
+            this.viewGrid.Margin = new System.Windows.Forms.Padding(4);
+            this.viewGrid.Name = "viewGrid";
+            this.viewGrid.Rows = ((short)(2));
+            this.viewGrid.Size = new System.Drawing.Size(384, 209);
+            this.viewGrid.TabIndex = 0;
+            this.viewGrid.Text = "viewGrid1";
+            this.viewGrid.Click += new System.EventHandler(this.viewGrid_Click);
+            // 
+            // btMap
+            // 
+            this.btMap.BackColor = System.Drawing.Color.Silver;
+            this.btMap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btMap.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btMap.ForeColor = System.Drawing.Color.Black;
+            this.btMap.Location = new System.Drawing.Point(6, 4);
+            this.btMap.Margin = new System.Windows.Forms.Padding(4);
+            this.btMap.Name = "btMap";
+            this.btMap.Size = new System.Drawing.Size(83, 38);
+            this.btMap.TabIndex = 8;
+            this.btMap.Text = "Мапа";
+            this.btMap.UseVisualStyleBackColor = false;
+            this.btMap.Click += new System.EventHandler(this.btMap_Click);
             // 
             // AddViewForm
             // 
@@ -185,7 +202,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.panel);
+            this.Controls.Add(this.pnMap);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
@@ -216,7 +233,7 @@
         #endregion
 
         private VideoServer.Controls.ViewGrid viewGrid;
-        private System.Windows.Forms.Panel panel;
+        private System.Windows.Forms.Panel pnMap;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
@@ -226,5 +243,6 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem setTimeToolStripMenuItem;
         private System.Windows.Forms.ListBox lbxCameras;
+        private System.Windows.Forms.Button btMap;
     }
 }
