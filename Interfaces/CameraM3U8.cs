@@ -12,7 +12,6 @@ namespace Interfaces
     {
         private static readonly LibVLC SharedLibVLC;
         private int _restart_time = 5000;
-        private int try_cnt = 0;
         static CameraM3U8()
         {
             Core.Initialize();
@@ -22,84 +21,116 @@ namespace Interfaces
 #endif
         }
 
-        private IntPtr videoBuffer;
         private const uint width = 640;
         private const uint height = 480;
         private const uint pitch = width * 4;
-        private int bufferSize = (int)(width * height * 4);
+        private const int bufferSize = (int)(width * height * 4);
 
         public override event CameraEventHandler NewFrame;
-        Bitmap safeCopy;
         Bitmap yoloCopy;
+
+        /// <summary>
+        /// State of one Start() run. Each run has its own buffer and stop signal, so Stop() does not
+        /// have to wait for the worker: an old worker finishing late can't touch a newer run's data.
+        /// </summary>
+        private sealed class Run
+        {
+            public readonly ManualResetEvent Stop = new ManualResetEvent(false);
+            public IntPtr Buffer;
+            public Bitmap Frame;
+            public int TryCount;
+            public int ErrorShown;      // 0/1, show at most one error message per run
+            // keep delegates referenced while LibVLC can call them
+            public MediaPlayer.LibVLCVideoLockCb Lock;
+            public MediaPlayer.LibVLCVideoUnlockCb Unlock;
+            public MediaPlayer.LibVLCVideoDisplayCb Display;
+        }
+
+        private Run current;
 
         public override void Start()
         {
-            stopEvent = new ManualResetEvent(false);
+            var run = new Run();
+            run.Buffer = Marshal.AllocHGlobal(bufferSize);
+            run.Frame = new Bitmap((int)width, (int)height, (int)pitch, PixelFormat.Format32bppRgb, run.Buffer);
+            run.Lock = (opaque, planes) => { Marshal.WriteIntPtr(planes, run.Buffer); return run.Buffer; };
+            run.Unlock = (opaque, picture, planes) => { };
+            run.Display = (opaque, picture) => OnDisplay(run);
 
-            videoBuffer = Marshal.AllocHGlobal(bufferSize);
+            current = run;
+            stopEvent = run.Stop;
 
-            safeCopy = new Bitmap((int)width, (int)height, (int)pitch,
-                    PixelFormat.Format32bppRgb, videoBuffer);
-
-            thread = new Thread(WorkerThread);
+            thread = new Thread(() => WorkerThread(run));
             thread.Name = String.Format("M3U8[{0}]", cameraAdapter.CameraName);
+            thread.IsBackground = true;
             thread.Start();
         }
 
+        /// <summary>
+        /// Signal the worker to stop and return immediately.
+        /// Joining here blocked the UI thread while LibVLC stopped / reconnected the stream.
+        /// </summary>
         public override void Stop()
         {
-            if (thread != null)
-            {
-                stopEvent.Set();
-                thread.Join();
-                thread = null;
-            }
+            Run run = current;
+            current = null;
+            thread = null;
+            run?.Stop.Set();
         }
 
         public override void WorkerThread()
+        {
+            Run run = current;
+            if (run != null)
+                WorkerThread(run);
+        }
+
+        private void WorkerThread(Run run)
         {
             try
             {
                 using (MediaPlayer mediaPlayer = new MediaPlayer(SharedLibVLC))
                 {
-
                     mediaPlayer.SetVideoFormat("RV32", width, height, pitch);
-                    mediaPlayer.SetVideoCallbacks(OnLock, OnUnlock, OnDisplay);
+                    mediaPlayer.SetVideoCallbacks(run.Lock, run.Unlock, run.Display);
 
                     string playlistUrl = cameraAdapter.SourcePath;
-                    var media = new Media(SharedLibVLC, playlistUrl, FromType.FromLocation);
-                    ////media.AddOption(":rate=0.1");
-                    ////media.AddOption(":live-caching=300");
-                    media.AddOption(":drop-late-frames");
-                    if (!mediaPlayer.Play(media))
-                    {
-                        MessageBox.Show(String.Format("Failed to start playback.\nCamera[{0}]", cameraAdapter.CameraName));
-                        stopEvent.Set();
-                    }
 
+                    // LibVLC event thread: must not block here (no modal UI, no LibVLC calls)
                     mediaPlayer.EncounteredError += (sender, e) =>
                     {
-                        MessageBox.Show(String.Format("Failed to play playback.\nCamera[{0}]", cameraAdapter.CameraName));
-                        stopEvent.Set();
+                        ShowError(run, String.Format("Failed to play playback.\nCamera[{0}]", cameraAdapter.CameraName));
+                        run.Stop.Set();
                     };
 
-                    while (!stopEvent.WaitOne(_restart_time))
+                    using (var media = new Media(SharedLibVLC, playlistUrl, FromType.FromLocation))
+                    {
+                        ////media.AddOption(":rate=0.1");
+                        ////media.AddOption(":live-caching=300");
+                        media.AddOption(":drop-late-frames");
+                        if (!mediaPlayer.Play(media))
+                        {
+                            ShowError(run, String.Format("Failed to start playback.\nCamera[{0}]", cameraAdapter.CameraName));
+                            run.Stop.Set();
+                        }
+                    }
+
+                    while (!run.Stop.WaitOne(_restart_time))
                     {
                         if (mediaPlayer.State == VLCState.Ended ||
                             mediaPlayer.State == VLCState.Error ||
                             !mediaPlayer.IsPlaying ||
-                            try_cnt == 5)
+                            run.TryCount == 5)
                         {
-                            RestartStream(mediaPlayer, playlistUrl);
-                            try_cnt = 0;
+                            RestartStream(mediaPlayer, playlistUrl, run);
+                            run.TryCount = 0;
                         }
-                        try_cnt++;
-
+                        run.TryCount++;
                     }
 
+                    // may take a while for network streams - runs on this worker, not on the UI thread
                     mediaPlayer.Stop();
                 }
-
             }
             catch (Exception ex)
             {
@@ -107,16 +138,24 @@ namespace Interfaces
             }
             finally
             {
-                Marshal.FreeHGlobal(videoBuffer);
+                // LibVLC no longer calls the video callbacks after Stop/Dispose
+                run.Frame?.Dispose();
+                Marshal.FreeHGlobal(run.Buffer);
+                run.Stop.Dispose();
             }
         }
-        private void RestartStream(MediaPlayer mediaPlayer, string playlistUrl)
+
+        private void RestartStream(MediaPlayer mediaPlayer, string playlistUrl, Run run)
         {
+            if (run.Stop.WaitOne(0))
+                return;
             try
             {
                 Console.WriteLine(String.Format("Restarting stream.Camera [{0}]", cameraAdapter.CameraName));
 
                 mediaPlayer.Stop();
+                if (run.Stop.WaitOne(0))
+                    return;
                 using (var media = new Media(SharedLibVLC, playlistUrl, FromType.FromLocation))
                 {
                     //media.AddOption(":rate=0.1");
@@ -131,14 +170,15 @@ namespace Interfaces
             }
         }
 
-        private void OnUnlock(IntPtr opaque, IntPtr picture, IntPtr planes)
+        /// <summary>
+        /// Show error without blocking the caller (worker / LibVLC thread), once per run
+        /// </summary>
+        private static void ShowError(Run run, string message)
         {
-        }
-
-        private IntPtr OnLock(IntPtr opaque, IntPtr planes)
-        {
-            Marshal.WriteIntPtr(planes, videoBuffer);
-            return videoBuffer;
+            Console.WriteLine(message);
+            if (Interlocked.Exchange(ref run.ErrorShown, 1) == 0)
+                ThreadPool.QueueUserWorkItem(_ => MessageBox.Show(message, "M3U8",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning));
         }
 
         private void SafeCopy(ref Bitmap safeCopy)
@@ -204,14 +244,15 @@ namespace Interfaces
             return copy;
         }
 
-        private void OnDisplay(IntPtr opaque, IntPtr picture)
+        private void OnDisplay(Run run)
         {
             try
             {
-                try_cnt = 0;
+                run.TryCount = 0;
+                Bitmap safeCopy = run.Frame;
                 SafeCopy(ref safeCopy);
 
-                if ((cameraAdapter.SaveToFile) && (!stopEvent.WaitOne(0, true)))
+                if ((cameraAdapter.SaveToFile) && (!run.Stop.WaitOne(0, true)))
                 {
                     if (cameraAdapter.UseYOLO)
                     {
