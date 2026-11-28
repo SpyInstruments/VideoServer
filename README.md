@@ -33,4 +33,16 @@ VideoServer provides a modular framework for connecting to IP cameras, capturing
 ## Getting Started
 1. Clone the repository:
    ```bash
-   git clone https://github.com/maksym-sydorenko/VideoServer.git
+   git clone https://github.com/SpyInstruments/VideoServer.git
+   ```
+
+## License
+VCS source code is licensed under the **GNU Lesser General Public License v3.0** (LGPL-3.0) —
+see [COPYING.LESSER](COPYING.LESSER) and [COPYING](COPYING) (GPL-3.0, which LGPL-3.0 supplements).
+
+Object detection uses the Ultralytics YOLOv8 model, which is licensed under the
+**GNU Affero General Public License v3.0** ([licenses/AGPL-3.0.txt](licenses/AGPL-3.0.txt)).
+Builds and installers that include the YOLOv8 model are therefore distributed under the terms of AGPL-3.0;
+the corresponding source code is this repository at the release tag.
+
+Third-party components and their licenses are listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
