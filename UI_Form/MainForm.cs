@@ -56,6 +56,113 @@ namespace VideoServer
             settingForm = new VideoServer.UserInterface.SettingForm();
             settingForm.OnSaveSettingFile += SettingForm_OnSaveSettingFile;
             settingForm.OnLoadSettingFile += SettingForm_OnLoadSettingFile;
+            settingForm.OnAddSettingFile += SettingForm_OnAddSettingFile;
+        }
+
+        /// <summary>
+        /// Merge cameras from another settings file into current settings
+        /// </summary>
+        private void SettingForm_OnAddSettingFile(object sender, string path)
+        {
+            if (_setting == null)
+                return;
+
+            XmlDocument source = new XmlDocument();
+            source.Load(path);
+
+            XmlNodeList sourceCameras = source.SelectNodes("/ROOT/Cameras/Camera");
+            if (sourceCameras == null || sourceCameras.Count == 0)
+            {
+                MessageBox.Show("У файлі немає камер", "Додати камери", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            XmlNode camerasNode = _setting.SelectSingleNode("/ROOT/Cameras");
+            if (camerasNode == null)
+            {
+                camerasNode = _setting.CreateElement("Cameras");
+                _setting.DocumentElement.AppendChild(camerasNode);
+            }
+
+            // name -> existing camera node in current settings
+            var existing = new System.Collections.Generic.Dictionary<string, XmlNode>();
+            foreach (XmlNode node in camerasNode.SelectNodes("Camera"))
+            {
+                string name = GetCameraName(node);
+                if (!string.IsNullOrEmpty(name) && !existing.ContainsKey(name))
+                    existing.Add(name, node);
+            }
+
+            // collect cameras from file, check name conflicts
+            var toImport = new System.Collections.Generic.List<XmlNode>();
+            var conflicts = new System.Collections.Generic.List<string>();
+            var seen = new System.Collections.Generic.HashSet<string>();
+            foreach (XmlNode node in sourceCameras)
+            {
+                string name = GetCameraName(node);
+                if (string.IsNullOrEmpty(name) || !seen.Add(name))
+                    continue; // no name or duplicated inside the file
+
+                toImport.Add(node);
+                if (existing.ContainsKey(name))
+                    conflicts.Add(name);
+            }
+
+            bool replace = false;
+            if (conflicts.Count > 0)
+            {
+                DialogResult answer = MessageBox.Show(
+                    "Камери з такими назвами вже існують:\n\n" + string.Join("\n", conflicts) +
+                    "\n\nТак - замінити їх\nНі - пропустити\nСкасувати - нічого не додавати",
+                    "Додати камери", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                if (answer == DialogResult.Cancel)
+                    return;
+                replace = answer == DialogResult.Yes;
+            }
+
+            int added = 0, replaced = 0, skipped = 0;
+            foreach (XmlNode node in toImport)
+            {
+                string name = GetCameraName(node);
+                XmlElement imported = (XmlElement)_setting.ImportNode(node, true);
+                imported.SetAttribute("CameraName", name);
+
+                XmlNode old;
+                if (existing.TryGetValue(name, out old))
+                {
+                    if (!replace)
+                    {
+                        skipped++;
+                        continue;
+                    }
+                    camerasNode.ReplaceChild(imported, old);
+                    replaced++;
+                }
+                else
+                {
+                    camerasNode.AppendChild(imported);
+                    added++;
+                }
+            }
+
+            _setting.Save(appPath + "\\Setting.xml");
+            UpdateTree();
+
+            MessageBox.Show(
+                string.Format("Додано: {0}\nЗамінено: {1}\nПропущено: {2}", added, replaced, skipped),
+                "Додати камери", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Camera name from CameraName attribute, or CameraName element if attribute is missing
+        /// </summary>
+        static string GetCameraName(XmlNode camera)
+        {
+            string name = camera.Attributes?["CameraName"]?.Value;
+            if (string.IsNullOrWhiteSpace(name))
+                name = camera["CameraName"]?.InnerText;
+            return name?.Trim();
         }
 
         private void SettingForm_OnLoadSettingFile(object sender, string path)

@@ -14,6 +14,11 @@ namespace VideoServer.UserInterface
 
         public event SettingUpdate OnLoadSettingFile;
 
+        /// <summary>
+        /// Add cameras from file to current settings (merge, not replace)
+        /// </summary>
+        public event SettingUpdate OnAddSettingFile;
+
         public SettingForm()
         {
             InitializeComponent();
@@ -158,7 +163,23 @@ namespace VideoServer.UserInterface
                 MessageBox.Show(ex.Message);
             }
         }
-
+        private void btAddXmlCameras_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "XML files (*.xml)|*.xml";
+                ofd.Title = "Додати камери з файлу";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    OnAddSettingFile?.Invoke(this, ofd.FileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
         private void btSave_Click(object sender, EventArgs e)
         {
             try
@@ -177,5 +198,7 @@ namespace VideoServer.UserInterface
             }
         }
         #endregion
+
+
     }
 }

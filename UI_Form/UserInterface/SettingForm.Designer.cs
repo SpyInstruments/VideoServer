@@ -41,9 +41,10 @@
             this.cbDisk = new System.Windows.Forms.ComboBox();
             this.cbxGlobalPath = new System.Windows.Forms.CheckBox();
             this.gbCamers = new System.Windows.Forms.GroupBox();
-            this.tbSettingFile = new System.Windows.Forms.TextBox();
             this.btSave = new System.Windows.Forms.Button();
             this.btLoad = new System.Windows.Forms.Button();
+            this.tbSettingFile = new System.Windows.Forms.TextBox();
+            this.btAddXmlCameras = new System.Windows.Forms.Button();
             this.dtbDetectionLevel = new DoubleTextBox();
             this.gbMotionDetection.SuspendLayout();
             this.gbGlobalPath.SuspendLayout();
@@ -55,18 +56,21 @@
             this.gbMotionDetection.Controls.Add(this.dtbDetectionLevel);
             this.gbMotionDetection.Controls.Add(this.btSetDetectionLevel);
             this.gbMotionDetection.Controls.Add(this.lbDetectionLevel);
-            this.gbMotionDetection.Location = new System.Drawing.Point(13, 13);
+            this.gbMotionDetection.Location = new System.Drawing.Point(20, 20);
+            this.gbMotionDetection.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gbMotionDetection.Name = "gbMotionDetection";
-            this.gbMotionDetection.Size = new System.Drawing.Size(459, 61);
+            this.gbMotionDetection.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.gbMotionDetection.Size = new System.Drawing.Size(688, 95);
             this.gbMotionDetection.TabIndex = 0;
             this.gbMotionDetection.TabStop = false;
             this.gbMotionDetection.Text = "Детектор Руху";
             // 
             // btSetDetectionLevel
             // 
-            this.btSetDetectionLevel.Location = new System.Drawing.Point(341, 25);
+            this.btSetDetectionLevel.Location = new System.Drawing.Point(512, 39);
+            this.btSetDetectionLevel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btSetDetectionLevel.Name = "btSetDetectionLevel";
-            this.btSetDetectionLevel.Size = new System.Drawing.Size(112, 27);
+            this.btSetDetectionLevel.Size = new System.Drawing.Size(168, 42);
             this.btSetDetectionLevel.TabIndex = 1;
             this.btSetDetectionLevel.Text = "Встановити";
             this.btSetDetectionLevel.UseVisualStyleBackColor = true;
@@ -75,9 +79,10 @@
             // lbDetectionLevel
             // 
             this.lbDetectionLevel.AutoSize = true;
-            this.lbDetectionLevel.Location = new System.Drawing.Point(6, 28);
+            this.lbDetectionLevel.Location = new System.Drawing.Point(9, 44);
+            this.lbDetectionLevel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbDetectionLevel.Name = "lbDetectionLevel";
-            this.lbDetectionLevel.Size = new System.Drawing.Size(145, 16);
+            this.lbDetectionLevel.Size = new System.Drawing.Size(219, 25);
             this.lbDetectionLevel.TabIndex = 0;
             this.lbDetectionLevel.Text = "Рівень детектування";
             // 
@@ -90,9 +95,11 @@
             this.gbGlobalPath.Controls.Add(this.lbDisk);
             this.gbGlobalPath.Controls.Add(this.cbDisk);
             this.gbGlobalPath.Controls.Add(this.cbxGlobalPath);
-            this.gbGlobalPath.Location = new System.Drawing.Point(13, 80);
+            this.gbGlobalPath.Location = new System.Drawing.Point(20, 125);
+            this.gbGlobalPath.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gbGlobalPath.Name = "gbGlobalPath";
-            this.gbGlobalPath.Size = new System.Drawing.Size(460, 236);
+            this.gbGlobalPath.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.gbGlobalPath.Size = new System.Drawing.Size(690, 369);
             this.gbGlobalPath.TabIndex = 1;
             this.gbGlobalPath.TabStop = false;
             // 
@@ -101,27 +108,30 @@
             this.rtbDiskInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.rtbDiskInfo.Location = new System.Drawing.Point(9, 110);
+            this.rtbDiskInfo.Location = new System.Drawing.Point(14, 172);
+            this.rtbDiskInfo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rtbDiskInfo.Name = "rtbDiskInfo";
             this.rtbDiskInfo.ReadOnly = true;
-            this.rtbDiskInfo.Size = new System.Drawing.Size(445, 120);
+            this.rtbDiskInfo.Size = new System.Drawing.Size(666, 185);
             this.rtbDiskInfo.TabIndex = 7;
             this.rtbDiskInfo.Text = "";
             // 
             // tbPath
             // 
             this.tbPath.Enabled = false;
-            this.tbPath.Location = new System.Drawing.Point(118, 65);
+            this.tbPath.Location = new System.Drawing.Point(177, 102);
+            this.tbPath.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tbPath.Name = "tbPath";
-            this.tbPath.Size = new System.Drawing.Size(193, 22);
+            this.tbPath.Size = new System.Drawing.Size(288, 31);
             this.tbPath.TabIndex = 6;
             this.tbPath.Text = "Video\\";
             // 
             // btSetDiskPath
             // 
-            this.btSetDiskPath.Location = new System.Drawing.Point(342, 64);
+            this.btSetDiskPath.Location = new System.Drawing.Point(513, 100);
+            this.btSetDiskPath.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btSetDiskPath.Name = "btSetDiskPath";
-            this.btSetDiskPath.Size = new System.Drawing.Size(112, 27);
+            this.btSetDiskPath.Size = new System.Drawing.Size(168, 42);
             this.btSetDiskPath.TabIndex = 5;
             this.btSetDiskPath.Text = "Встановити";
             this.btSetDiskPath.UseVisualStyleBackColor = true;
@@ -130,18 +140,20 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 68);
+            this.label2.Location = new System.Drawing.Point(9, 106);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 16);
+            this.label2.Size = new System.Drawing.Size(138, 25);
             this.label2.TabIndex = 3;
             this.label2.Text = "Шлях до текі";
             // 
             // lbDisk
             // 
             this.lbDisk.AutoSize = true;
-            this.lbDisk.Location = new System.Drawing.Point(6, 34);
+            this.lbDisk.Location = new System.Drawing.Point(9, 53);
+            this.lbDisk.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbDisk.Name = "lbDisk";
-            this.lbDisk.Size = new System.Drawing.Size(38, 16);
+            this.lbDisk.Size = new System.Drawing.Size(62, 25);
             this.lbDisk.TabIndex = 2;
             this.lbDisk.Text = "Диск";
             // 
@@ -150,17 +162,19 @@
             this.cbDisk.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbDisk.Enabled = false;
             this.cbDisk.FormattingEnabled = true;
-            this.cbDisk.Location = new System.Drawing.Point(118, 26);
+            this.cbDisk.Location = new System.Drawing.Point(177, 41);
+            this.cbDisk.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbDisk.Name = "cbDisk";
-            this.cbDisk.Size = new System.Drawing.Size(79, 24);
+            this.cbDisk.Size = new System.Drawing.Size(116, 33);
             this.cbDisk.TabIndex = 1;
             // 
             // cbxGlobalPath
             // 
             this.cbxGlobalPath.AutoSize = true;
-            this.cbxGlobalPath.Location = new System.Drawing.Point(7, 0);
+            this.cbxGlobalPath.Location = new System.Drawing.Point(10, 0);
+            this.cbxGlobalPath.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbxGlobalPath.Name = "cbxGlobalPath";
-            this.cbxGlobalPath.Size = new System.Drawing.Size(244, 20);
+            this.cbxGlobalPath.Size = new System.Drawing.Size(374, 29);
             this.cbxGlobalPath.TabIndex = 0;
             this.cbxGlobalPath.Text = "Зберігати файли в однному місці";
             this.cbxGlobalPath.UseVisualStyleBackColor = true;
@@ -168,28 +182,24 @@
             // 
             // gbCamers
             // 
+            this.gbCamers.Controls.Add(this.btAddXmlCameras);
             this.gbCamers.Controls.Add(this.btSave);
             this.gbCamers.Controls.Add(this.btLoad);
-            this.gbCamers.Location = new System.Drawing.Point(12, 322);
+            this.gbCamers.Location = new System.Drawing.Point(18, 503);
+            this.gbCamers.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gbCamers.Name = "gbCamers";
-            this.gbCamers.Size = new System.Drawing.Size(461, 61);
+            this.gbCamers.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.gbCamers.Size = new System.Drawing.Size(692, 95);
             this.gbCamers.TabIndex = 2;
             this.gbCamers.TabStop = false;
             this.gbCamers.Text = "Файл з камерами";
             // 
-            // tbSettingFile
-            // 
-            this.tbSettingFile.Enabled = false;
-            this.tbSettingFile.Location = new System.Drawing.Point(22, 347);
-            this.tbSettingFile.Name = "tbSettingFile";
-            this.tbSettingFile.Size = new System.Drawing.Size(252, 22);
-            this.tbSettingFile.TabIndex = 7;
-            // 
             // btSave
             // 
-            this.btSave.Location = new System.Drawing.Point(369, 23);
+            this.btSave.Location = new System.Drawing.Point(554, 36);
+            this.btSave.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btSave.Name = "btSave";
-            this.btSave.Size = new System.Drawing.Size(85, 27);
+            this.btSave.Size = new System.Drawing.Size(118, 42);
             this.btSave.TabIndex = 4;
             this.btSave.Text = "Зберегти";
             this.btSave.UseVisualStyleBackColor = true;
@@ -197,37 +207,59 @@
             // 
             // btLoad
             // 
-            this.btLoad.Location = new System.Drawing.Point(267, 23);
+            this.btLoad.Location = new System.Drawing.Point(270, 36);
+            this.btLoad.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btLoad.Name = "btLoad";
-            this.btLoad.Size = new System.Drawing.Size(96, 27);
+            this.btLoad.Size = new System.Drawing.Size(134, 42);
             this.btLoad.TabIndex = 1;
             this.btLoad.Text = "Загрузити";
             this.btLoad.UseVisualStyleBackColor = true;
             this.btLoad.Click += new System.EventHandler(this.btLoad_Click);
             // 
+            // tbSettingFile
+            // 
+            this.tbSettingFile.Enabled = false;
+            this.tbSettingFile.Location = new System.Drawing.Point(33, 542);
+            this.tbSettingFile.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbSettingFile.Name = "tbSettingFile";
+            this.tbSettingFile.Size = new System.Drawing.Size(247, 31);
+            this.tbSettingFile.TabIndex = 7;
+            // 
+            // btAddXmlCameras
+            // 
+            this.btAddXmlCameras.Location = new System.Drawing.Point(412, 36);
+            this.btAddXmlCameras.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btAddXmlCameras.Name = "btAddXmlCameras";
+            this.btAddXmlCameras.Size = new System.Drawing.Size(134, 42);
+            this.btAddXmlCameras.TabIndex = 5;
+            this.btAddXmlCameras.Text = "Додати";
+            this.btAddXmlCameras.UseVisualStyleBackColor = true;
+            this.btAddXmlCameras.Click += new System.EventHandler(this.btAddXmlCameras_Click);
+            // 
             // dtbDetectionLevel
             // 
-            this.dtbDetectionLevel.Location = new System.Drawing.Point(161, 25);
+            this.dtbDetectionLevel.Location = new System.Drawing.Point(242, 39);
+            this.dtbDetectionLevel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dtbDetectionLevel.Maximum = 1.7976931348623157E+308D;
             this.dtbDetectionLevel.Minimum = -1.7976931348623157E+308D;
             this.dtbDetectionLevel.Name = "dtbDetectionLevel";
-            this.dtbDetectionLevel.Size = new System.Drawing.Size(100, 22);
+            this.dtbDetectionLevel.Size = new System.Drawing.Size(148, 31);
             this.dtbDetectionLevel.TabIndex = 3;
             this.dtbDetectionLevel.Value = null;
             // 
             // SettingForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SlateGray;
-            this.ClientSize = new System.Drawing.Size(484, 397);
+            this.ClientSize = new System.Drawing.Size(726, 620);
             this.Controls.Add(this.tbSettingFile);
             this.Controls.Add(this.gbCamers);
             this.Controls.Add(this.gbGlobalPath);
             this.Controls.Add(this.gbMotionDetection);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SettingForm";
@@ -262,5 +294,6 @@
         private System.Windows.Forms.Button btLoad;
         private System.Windows.Forms.TextBox tbSettingFile;
         private System.Windows.Forms.Button btSave;
+        private System.Windows.Forms.Button btAddXmlCameras;
     }
 }
