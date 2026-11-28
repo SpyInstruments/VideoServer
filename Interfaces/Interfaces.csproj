@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\VideoServer\packages\Xamarin.Forms.3.2.0.871581\build\netstandard2.0\Xamarin.Forms.props" Condition="Exists('..\VideoServer\packages\Xamarin.Forms.3.2.0.871581\build\netstandard2.0\Xamarin.Forms.props')" />
+  <Import Project="..\VideoServer\packages\Microsoft.ML.OnnxRuntime.1.32.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.props" Condition="Exists('..\VideoServer\packages\Microsoft.ML.OnnxRuntime.1.32.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -111,6 +112,9 @@
     <Reference Include="System.IO.Pipelines, Version=10.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\VideoServer\packages\System.IO.Pipelines.10.0.1\lib\net462\System.IO.Pipelines.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ML.OnnxRuntime, Version=1.32.0.0, Culture=neutral, PublicKeyToken=f27f157f0a5b7bb6, processorArchitecture=MSIL">
+      <HintPath>..\VideoServer\packages\Microsoft.ML.OnnxRuntime.Managed.1.32.0\lib\netstandard2.0\Microsoft.ML.OnnxRuntime.dll</HintPath>
+    </Reference>
     <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\VideoServer\packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
     </Reference>
@@ -184,6 +188,7 @@
     <Compile Include="CameraAdapter.cs" />
     <Compile Include="CameraM3U8.cs" />
     <Compile Include="DetectorYOLO.cs" />
+    <Compile Include="YoloModel.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="ISetupPage.cs" />
     <Compile Include="ISourceAdaptee.cs" />
@@ -201,6 +206,9 @@
     <None Include="Interfaces.cd" />
     <None Include="packages.config" />
     <None Include="UML.cd" />
+    <None Include="models\yolov8n.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -210,11 +218,14 @@
     <Error Condition="!Exists('..\VideoServer\packages\Xamarin.Forms.3.2.0.871581\build\netstandard2.0\Xamarin.Forms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\VideoServer\packages\Xamarin.Forms.3.2.0.871581\build\netstandard2.0\Xamarin.Forms.props'))" />
     <Error Condition="!Exists('..\VideoServer\packages\Xamarin.Forms.3.2.0.871581\build\netstandard2.0\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\VideoServer\packages\Xamarin.Forms.3.2.0.871581\build\netstandard2.0\Xamarin.Forms.targets'))" />
     <Error Condition="!Exists('..\VideoServer\packages\VideoLAN.LibVLC.Windows.3.0.21\build\VideoLAN.LibVLC.Windows.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\VideoServer\packages\VideoLAN.LibVLC.Windows.3.0.21\build\VideoLAN.LibVLC.Windows.targets'))" />
+    <Error Condition="!Exists('..\VideoServer\packages\Microsoft.ML.OnnxRuntime.1.32.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.props')" Text="$([System.String]::Format('$(ErrorText)', '..\VideoServer\packages\Microsoft.ML.OnnxRuntime.1.32.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.props'))" />
+    <Error Condition="!Exists('..\VideoServer\packages\Microsoft.ML.OnnxRuntime.1.32.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\VideoServer\packages\Microsoft.ML.OnnxRuntime.1.32.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.targets'))" />
     <Error Condition="!Exists('..\VideoServer\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\VideoServer\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets'))" />
   </Target>
   <Import Project="..\VideoServer\packages\Xamarin.Forms.3.2.0.871581\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\VideoServer\packages\Xamarin.Forms.3.2.0.871581\build\netstandard2.0\Xamarin.Forms.targets')" />
   <Import Project="..\VideoServer\packages\VideoLAN.LibVLC.Windows.3.0.21\build\VideoLAN.LibVLC.Windows.targets" Condition="Exists('..\VideoServer\packages\VideoLAN.LibVLC.Windows.3.0.21\build\VideoLAN.LibVLC.Windows.targets')" />
   <Import Project="..\VideoServer\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('..\VideoServer\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />
+  <Import Project="..\VideoServer\packages\Microsoft.ML.OnnxRuntime.1.32.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.targets" Condition="Exists('..\VideoServer\packages\Microsoft.ML.OnnxRuntime.1.32.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -11,7 +11,7 @@ VideoServer provides a modular framework for connecting to IP cameras, capturing
 - Modular architecture with clear interface boundaries  
 - DirectShow support for local video devices  
 - **Motion detection module for identifying activity in the frame**  
-- **YOLO-based object detection for recognizing objects in real time**
+- **YOLO-based object detection for recognizing objects in real time** (YOLOv8 runs inside the application via ONNX Runtime, no Python needed)
 
 ## Project Structure
 | Directory | Description |

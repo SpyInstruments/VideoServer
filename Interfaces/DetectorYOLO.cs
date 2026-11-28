@@ -1,101 +1,67 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Net.Http.Headers;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
-using System.Security.Policy;
 
 namespace Interfaces
 {
+    /// <summary>
+    /// Object detection for one camera. Frames are processed on a background thread with the
+    /// in-process YOLO model (no Python server). While a frame is being processed new frames are skipped.
+    /// </summary>
     public class DetectorYOLO
     {
+        // names used in camera settings -> YOLO (COCO) labels; keeps old settings working
+        static readonly Dictionary<string, string> LabelAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "human", "person" },
+            { "bicecle", "bicycle" },
+        };
 
-        Bitmap localBitmap;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        static int modelErrorShown = 0;
+
+        readonly AutoResetEvent frameReady = new AutoResetEvent(false);
+        readonly Thread thread;
+        readonly object sync = new object();
+
+        int busy = 0;               // 1 while a frame is waiting or being processed
+        Bitmap frame;               // own copy of the frame to process
         string path = "";
         string fileName = "";
-        private string fullUrl = "";
-        private string[] obj2detect = null;
-        private Thread thread = null;
-        bool thread_started = false;
-        bool next_image = false;
+        string[] obj2detect = new string[0];
 
         public DetectorYOLO(string cameraName)
         {
             thread = new Thread(DetectRequestTask);
             thread.Name = String.Format("YOLO[{0}]", cameraName);
+            thread.IsBackground = true;
             thread.Start();
         }
 
         private void DetectRequestTask()
         {
-            thread_started = true;
-            while (thread_started)
+            while (true)
             {
-                if (!next_image)
+                frameReady.WaitOne();
+
+                Bitmap image;
+                string savePath, saveName;
+                string[] targets;
+                lock (sync)
                 {
-                    continue;
+                    image = frame;
+                    frame = null;
+                    savePath = path;
+                    saveName = fileName;
+                    targets = obj2detect;
                 }
+
                 try
                 {
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        localBitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                        ms.Seek(0, SeekOrigin.Begin);
-
-                        using (HttpClient client = new HttpClient())
-                        using (MultipartFormDataContent form = new MultipartFormDataContent())
-                        {
-                            var fileContent = new StreamContent(ms);
-                            fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-
-                            form.Add(fileContent, "file", $"{fileName}.jpg");
-                            var response = client.PostAsync(fullUrl, form).Result;
-                            var result = response.Content.ReadAsStringAsync().Result;
-
-                            using (JsonDocument doc = JsonDocument.Parse(result))
-                            {
-                                if (doc.RootElement.TryGetProperty("detections", out JsonElement detections))
-                                {
-                                    foreach (var detection in detections.EnumerateArray())
-                                    {
-                                        string label = detection.GetProperty("label").GetString();
-                                        float confidence = detection.GetProperty("confidence").GetSingle();
-
-                                        var box = detection.GetProperty("box").EnumerateArray().ToArray();
-                                        float x1 = box[0].GetSingle();
-                                        float y1 = box[1].GetSingle();
-                                        float x2 = box[2].GetSingle();
-                                        float y2 = box[3].GetSingle();
-
-                                        float w = x2 - x1;
-                                        float h = y2 - y1;
-
-                                        if (obj2detect.Any(o => string.Equals(o, label, StringComparison.OrdinalIgnoreCase)))
-                                        {
-                                            Console.WriteLine($"Found {label} with confidence {confidence}");
-
-                                            using (Graphics g = Graphics.FromImage(localBitmap))
-                                            using (Pen pen = new Pen(Color.Red, 1))
-                                            using (Font font = new Font("Arial", 10))
-                                            using (SolidBrush brush = new SolidBrush(Color.Yellow))
-                                            {
-                                                g.DrawRectangle(pen, x1, y1, w, h);
-                                                g.DrawString($"{label} ({confidence:P1})", font, brush, new PointF(x1, y1 - 20));
-                                            }
-
-                                            string filePath = Path.Combine(path, $"{fileName}.jpg");
-                                            localBitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    if (image != null && targets.Length > 0)
+                        Detect(image, savePath, saveName, targets);
                 }
                 catch (Exception ex)
                 {
@@ -103,32 +69,84 @@ namespace Interfaces
                 }
                 finally
                 {
-                    _semaphore.Release();
-                    next_image = false;
+                    image?.Dispose();
+                    Interlocked.Exchange(ref busy, 0);
                 }
             }
         }
 
-        public void DetectObjects(Bitmap bitmap, string path, string fileName, string[] obj2detect, string url = "http://localhost:7007/upload")
+        private static void Detect(Bitmap image, string savePath, string saveName, string[] targets)
         {
-            if (!_semaphore.Wait(0))
+            YoloModel model;
+            try
             {
+                model = YoloModel.Shared;
+            }
+            catch (Exception ex)
+            {
+                // report a missing/broken model once, not for every frame of every camera
+                if (Interlocked.Exchange(ref modelErrorShown, 1) == 0)
+                    ThreadPool.QueueUserWorkItem(_ => System.Windows.Forms.MessageBox.Show(
+                        "Не вдалося завантажити модель YOLO.\n\n" + ex.Message, "YOLO",
+                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning));
+                throw;
+            }
+
+            List<YoloDetection> found = model.Detect(image)
+                .Where(d => targets.Any(t => string.Equals(t, d.Label, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+            if (found.Count == 0)
                 return;
+
+            using (Graphics g = Graphics.FromImage(image))
+            using (Pen pen = new Pen(Color.Red, 1))
+            using (Font font = new Font("Arial", 10))
+            using (SolidBrush brush = new SolidBrush(Color.Yellow))
+            {
+                foreach (YoloDetection d in found)
+                {
+                    Console.WriteLine($"Found {d.Label} with confidence {d.Confidence}");
+                    g.DrawRectangle(pen, d.Box.X, d.Box.Y, d.Box.Width, d.Box.Height);
+                    g.DrawString($"{d.Label} ({d.Confidence:P1})", font, brush, new PointF(d.Box.X, d.Box.Y - 20));
+                }
             }
 
-            if (fullUrl =="")
+            string filePath = Path.Combine(savePath, $"{saveName}.jpg");
+            image.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
+        }
+
+        /// <summary>
+        /// Queue a frame for detection; ignored while the previous frame is still processed.
+        /// </summary>
+        /// <param name="url">not used anymore (was the Python YOLO server address), kept for compatibility</param>
+        public void DetectObjects(Bitmap bitmap, string path, string fileName, string[] obj2detect, string url = null)
+        {
+            if (bitmap == null || Interlocked.CompareExchange(ref busy, 1, 0) != 0)
+                return;
+
+            Bitmap copy;
+            try
             {
-                fullUrl = string.Format("http://{0}/upload", url);
+                // the caller keeps drawing new frames into its bitmap - work on our own copy
+                copy = new Bitmap(bitmap);
+            }
+            catch
+            {
+                Interlocked.Exchange(ref busy, 0);
+                throw;
+            }
+
+            lock (sync)
+            {
+                frame = copy;
                 this.path = path;
-                this.obj2detect = obj2detect.ToArray();
+                this.fileName = fileName;
+                this.obj2detect = (obj2detect ?? new string[0])
+                    .Where(o => !string.IsNullOrWhiteSpace(o))
+                    .Select(o => LabelAliases.TryGetValue(o.Trim(), out string label) ? label : o.Trim())
+                    .ToArray();
             }
-
-            this.fileName = fileName;
-            //lock (bitmap)
-            {
-                localBitmap = bitmap;
-            }
-            next_image = true;
+            frameReady.Set();
         }
     }
 }

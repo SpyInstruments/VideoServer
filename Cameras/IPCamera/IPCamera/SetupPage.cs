@@ -17,6 +17,11 @@ namespace IPCamera
         {
             InitializeComponent();
             mtbUrlYOLO.ValidatingType = typeof(System.Net.IPAddress);
+
+            // YOLO now runs inside the application (ONNX Runtime) - the server address is not used.
+            // The value is still saved to keep old settings files unchanged.
+            mtbUrlYOLO.Visible = false;
+            lbServerYOLO.Visible = false;
         }
 
         #region ISetupPage Members

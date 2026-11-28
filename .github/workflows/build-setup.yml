@@ -102,7 +102,10 @@ jobs:
             'Interfaces.dll', 'IPCamera.dll', 'axis.dll', 'DLink.dll', 'LocalCapture.dll', 'Panasonic.dll',
             'DirectShowLib.dll',
             'Microsoft.Web.WebView2.Core.dll', 'Microsoft.Web.WebView2.WinForms.dll',
-            'runtimes\win-x64\native\WebView2Loader.dll'
+            'runtimes\win-x64\native\WebView2Loader.dll',
+            'Microsoft.ML.OnnxRuntime.dll', 'onnxruntime.dll', 'onnxruntime_providers_shared.dll',
+            'models\yolov8n.onnx',
+            'licenses\COPYING.txt', 'licenses\COPYING.LESSER.txt', 'licenses\AGPL-3.0.txt', 'licenses\THIRD-PARTY-NOTICES.md'
           )
           $missing = @($required | Where-Object { $r = $_; -not (Get-ChildItem $out -Recurse -File | Where-Object { $_.FullName.EndsWith('\' + $r) }) })
           if ($missing.Count) { Write-Host ("::error title=Missing in MSI::" + ($missing -join ', ')); exit 1 }

@@ -7,7 +7,8 @@ It uses the following third-party components, each under its own license.
 
 | Component | Version | License |
 |---|---|---|
-| [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics) model (`yolov8n`) | 8.x | AGPL-3.0 — [licenses/AGPL-3.0.txt](licenses/AGPL-3.0.txt) |
+| [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics) model (`models/yolov8n.onnx`, exported from `yolov8n.pt`) | 8.x | AGPL-3.0 — [licenses/AGPL-3.0.txt](licenses/AGPL-3.0.txt) |
+| [ONNX Runtime](https://github.com/microsoft/onnxruntime) (`Microsoft.ML.OnnxRuntime`) | 1.32.0 | MIT |
 | [LibVLC](https://www.videolan.org/vlc/libvlc.html) (`VideoLAN.LibVLC.Windows`) | 3.0.21 | LGPL-2.1-or-later |
 | [LibVLCSharp](https://github.com/videolan/libvlcsharp) | 3.9.4 | LGPL-2.1-or-later |
 | [DirectShowLib](https://sourceforge.net/projects/directshownet/) | 1.0.0 | LGPL-2.1 |
@@ -25,4 +26,3 @@ AGPL-3.0. Its complete corresponding source code is this repository at the relea
 | [Leaflet](https://leafletjs.com/) 1.9.4 (loaded from unpkg.com in map windows) | BSD-2-Clause |
 | [OpenStreetMap](https://www.openstreetmap.org/copyright) map tiles and data | ODbL 1.0 — © OpenStreetMap contributors (attribution shown on the map) |
 | Microsoft Edge WebView2 Runtime | Microsoft software license (system component, installed separately) |
-| Python YOLO server (`ServerYOLO/`): FastAPI, Uvicorn, Pillow, Ultralytics | MIT / BSD / MIT-CMU / AGPL-3.0 (installed separately via pip) |
