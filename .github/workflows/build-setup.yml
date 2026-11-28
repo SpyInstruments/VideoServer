@@ -100,7 +100,7 @@ jobs:
           $required = @(
             'VideoServer.exe', 'VideoServer.exe.config', 'libvlc.zip', 'LibVLCSharp.dll',
             'Interfaces.dll', 'IPCamera.dll', 'axis.dll', 'DLink.dll', 'LocalCapture.dll', 'Panasonic.dll',
-            'AForge.dll', 'AForge.Video.dll', 'AForge.Video.DirectShow.dll',
+            'DirectShowLib.dll',
             'Microsoft.Web.WebView2.Core.dll', 'Microsoft.Web.WebView2.WinForms.dll',
             'runtimes\win-x64\native\WebView2Loader.dll'
           )

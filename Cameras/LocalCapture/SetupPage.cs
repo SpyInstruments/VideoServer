@@ -3,13 +3,12 @@
 using System.Windows.Forms;
 using Interfaces;
 using System.Xml;
-using AForge.Video.DirectShow;
+using DirectShowLib;
 
 namespace LocalCaptureDevice
 {
     public partial class SetupPage : System.Windows.Forms.UserControl, Interfaces.ISetupPage
     {
-        FilterInfoCollection filters;
         //private bool completed = false;
 
 
@@ -20,9 +19,9 @@ namespace LocalCaptureDevice
         {
             InitializeComponent();
             //cbCaptureDevice.
-            filters = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+            DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
 
-            if (filters.Count == 0)
+            if (devices.Length == 0)
             {
                 cbCaptureDevice.Items.Add("No local capture devices");
                 cbCaptureDevice.Enabled = false;
@@ -30,9 +29,10 @@ namespace LocalCaptureDevice
             else
             {
                 // add all devices to combo
-                foreach (FilterInfo filter in filters)
+                foreach (DsDevice device in devices)
                 {
-                    cbCaptureDevice.Items.Add(filter.Name);
+                    cbCaptureDevice.Items.Add(device.Name);
+                    device.Dispose();   // releases the COM moniker, only the name is needed here
                 }
                 // completed = true;
             }
