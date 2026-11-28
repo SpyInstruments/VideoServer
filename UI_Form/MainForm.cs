@@ -380,7 +380,11 @@ namespace VideoServer
 
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            EditCamera();
+            // context menu: edit camera or view depending on the selected tree node
+            if (treeView?.SelectedNode?.Parent != null && treeView.SelectedNode.Parent.Name == "2")
+                EditView();
+            else
+                EditCamera();
         }
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
@@ -593,6 +597,78 @@ namespace VideoServer
                 {
                     XmlNode addNode = _setting?.SelectSingleNode("/ROOT/CamerasViews");
                     addNode.AppendChild(node);
+                    _setting.Save(appPath + "\\Setting.xml");
+                    UpdateTree();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        XmlNode FindView(string viewName)
+        {
+            XmlNode views = _setting?.SelectSingleNode("/ROOT/CamerasViews");
+            if (views == null)
+                return null;
+            foreach (XmlNode view in views.SelectNodes("CamerasView"))
+            {
+                if (view.Attributes?["ViewName"]?.Value == viewName)
+                    return view;
+            }
+            return null;
+        }
+
+        void EditView()
+        {
+            try
+            {
+                if ((_setting == null) || (treeView?.SelectedNode?.Parent == null) || (treeView.SelectedNode.Parent.Name != "2"))
+                    return;
+
+                string oldName = treeView.SelectedNode.Text;
+                XmlNode oldNode = FindView(oldName);
+                if (oldNode == null)
+                    return;
+
+                XmlNode node = null;
+
+                viewSettingForm = new VideoServer.UserInterface.ViewSettingForm();
+                viewSettingForm.SetDocument(ref _setting);
+                viewSettingForm.SetNode(oldNode);
+
+                viewForm = new VideoServer.UserInterface.AddViewForm();
+                viewForm.SetDocument(ref _setting);
+
+                bool first = true;
+                do
+                {
+                    if (viewSettingForm.ShowDialog() != DialogResult.OK)
+                        return;
+                    viewSettingForm.GetNode(ref node);
+
+                    viewForm.SetNode(ref node);
+                    if (first)
+                    {
+                        // grid keeps its labels on Back -> Next, so fill it only once
+                        viewForm.SetSelectedCameras(oldNode);
+                        first = false;
+                    }
+
+                } while (viewForm.ShowDialog() == DialogResult.Retry);
+
+                if (viewForm.DialogResult == DialogResult.OK)
+                {
+                    string newName = node.Attributes["ViewName"].Value;
+                    XmlNode sameName = FindView(newName);
+                    if (sameName != null && sameName != oldNode)
+                    {
+                        MessageBox.Show("Вікно з такою назвою вже існує");
+                        return;
+                    }
+
+                    oldNode.ParentNode.ReplaceChild(node, oldNode);
                     _setting.Save(appPath + "\\Setting.xml");
                     UpdateTree();
                 }

@@ -34,14 +34,14 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.lbxCameras = new System.Windows.Forms.ListBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.viewGrid = new VideoServer.Controls.ViewGrid();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.btMap = new System.Windows.Forms.Button();
             this.btBack = new System.Windows.Forms.Button();
             this.btCancel = new System.Windows.Forms.Button();
             this.btFinish = new System.Windows.Forms.Button();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.setTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewGrid = new VideoServer.Controls.ViewGrid();
-            this.btMap = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -93,6 +93,19 @@
             this.panel2.Size = new System.Drawing.Size(392, 217);
             this.panel2.TabIndex = 3;
             // 
+            // viewGrid
+            // 
+            this.viewGrid.AllowDrop = true;
+            this.viewGrid.Cols = ((short)(2));
+            this.viewGrid.Location = new System.Drawing.Point(4, 4);
+            this.viewGrid.Margin = new System.Windows.Forms.Padding(4);
+            this.viewGrid.Name = "viewGrid";
+            this.viewGrid.Rows = ((short)(2));
+            this.viewGrid.Size = new System.Drawing.Size(384, 209);
+            this.viewGrid.TabIndex = 0;
+            this.viewGrid.Text = "viewGrid1";
+            this.viewGrid.Click += new System.EventHandler(this.viewGrid_Click);
+            // 
             // panel3
             // 
             this.panel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -106,6 +119,21 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(539, 46);
             this.panel3.TabIndex = 4;
+            // 
+            // btMap
+            // 
+            this.btMap.BackColor = System.Drawing.Color.Silver;
+            this.btMap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btMap.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btMap.ForeColor = System.Drawing.Color.Black;
+            this.btMap.Location = new System.Drawing.Point(6, 4);
+            this.btMap.Margin = new System.Windows.Forms.Padding(4);
+            this.btMap.Name = "btMap";
+            this.btMap.Size = new System.Drawing.Size(83, 38);
+            this.btMap.TabIndex = 8;
+            this.btMap.Text = "Мапа";
+            this.btMap.UseVisualStyleBackColor = false;
+            this.btMap.Click += new System.EventHandler(this.btMap_Click);
             // 
             // btBack
             // 
@@ -165,34 +193,6 @@
             this.setTimeToolStripMenuItem.Name = "setTimeToolStripMenuItem";
             this.setTimeToolStripMenuItem.Size = new System.Drawing.Size(384, 38);
             this.setTimeToolStripMenuItem.Text = "Установить график работы";
-            // 
-            // viewGrid
-            // 
-            this.viewGrid.AllowDrop = true;
-            this.viewGrid.Cols = ((short)(2));
-            this.viewGrid.Location = new System.Drawing.Point(4, 4);
-            this.viewGrid.Margin = new System.Windows.Forms.Padding(4);
-            this.viewGrid.Name = "viewGrid";
-            this.viewGrid.Rows = ((short)(2));
-            this.viewGrid.Size = new System.Drawing.Size(384, 209);
-            this.viewGrid.TabIndex = 0;
-            this.viewGrid.Text = "viewGrid1";
-            this.viewGrid.Click += new System.EventHandler(this.viewGrid_Click);
-            // 
-            // btMap
-            // 
-            this.btMap.BackColor = System.Drawing.Color.Silver;
-            this.btMap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btMap.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btMap.ForeColor = System.Drawing.Color.Black;
-            this.btMap.Location = new System.Drawing.Point(6, 4);
-            this.btMap.Margin = new System.Windows.Forms.Padding(4);
-            this.btMap.Name = "btMap";
-            this.btMap.Size = new System.Drawing.Size(83, 38);
-            this.btMap.TabIndex = 8;
-            this.btMap.Text = "Мапа";
-            this.btMap.UseVisualStyleBackColor = false;
-            this.btMap.Click += new System.EventHandler(this.btMap_Click);
             // 
             // AddViewForm
             // 

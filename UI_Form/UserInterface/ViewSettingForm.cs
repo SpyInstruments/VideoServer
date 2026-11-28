@@ -60,10 +60,41 @@ namespace VideoServer.UserInterface
             this.DialogResult = DialogResult.Cancel;
         }
 
+        XmlNode editView = null;
+
+        /// <summary>
+        /// Fill the dialog from an existing CamerasView node (edit mode)
+        /// </summary>
+        public void SetNode(XmlNode view)
+        {
+            editView = view;
+        }
+
         private void ViewSettingForm_Load(object sender, EventArgs e)
         {
             cbCol.SelectedIndex = 1;
             cbRow.SelectedIndex = 1;
+
+            if (editView != null)
+            {
+                tbName.Text = editView.Attributes?["ViewName"]?.Value ?? "";
+                SelectItem(cbRow, editView.SelectSingleNode("row")?.InnerText);
+                SelectItem(cbCol, editView.SelectSingleNode("col")?.InnerText);
+                if (editView.SelectSingleNode("width") != null)
+                    tbWidth.Text = editView.SelectSingleNode("width").InnerText;
+                if (editView.SelectSingleNode("height") != null)
+                    tbHeight.Text = editView.SelectSingleNode("height").InnerText;
+                rtbDescription.Text = editView.SelectSingleNode("description")?.InnerText ?? "";
+            }
+        }
+
+        static void SelectItem(ComboBox cb, string value)
+        {
+            if (value == null)
+                return;
+            int index = cb.Items.IndexOf(value.Trim());
+            if (index >= 0)
+                cb.SelectedIndex = index;
         }
         private void UpdateDialog(bool update)
         {

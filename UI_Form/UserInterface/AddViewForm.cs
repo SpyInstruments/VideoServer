@@ -54,6 +54,31 @@ namespace VideoServer.UserInterface
                 viewGrid.Cols = short.Parse(node.SelectSingleNode("col").InnerText);
         }
 
+        /// <summary>
+        /// Put cameras of an existing view into the grid (edit mode).
+        /// Call after SetNode; cameras outside the current rows/cols are ignored.
+        /// </summary>
+        public void SetSelectedCameras(XmlNode view)
+        {
+            XmlNodeList cameras = view?.SelectNodes("SelectedCamera");
+            if (cameras == null)
+                return;
+
+            foreach (XmlNode camera in cameras)
+            {
+                string name = camera.Attributes?["CameraName"]?.Value;
+                short row, col;
+                if (string.IsNullOrEmpty(name) ||
+                    !short.TryParse(camera.SelectSingleNode("row")?.InnerText, out row) ||
+                    !short.TryParse(camera.SelectSingleNode("col")?.InnerText, out col))
+                    continue;
+
+                if (row >= 0 && row < viewGrid.Rows && col >= 0 && col < viewGrid.Cols)
+                    viewGrid.SetLabel(name, row, col);
+            }
+            viewGrid.Invalidate();
+        }
+
         public void SetDocument(ref XmlDocument setting)
         {
             this._setting = setting;
