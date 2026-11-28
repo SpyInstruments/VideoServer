@@ -27,6 +27,13 @@ namespace VideoServer.UserInterface
             }
             if (cbCameraType.Items.Count > 0)
                 cbCameraType.SelectedIndex = 0;
+
+            // the form is reused: never leave it in preview state (Add / Close / window X)
+            FormClosing += (s, e) =>
+            {
+                if (previewing)
+                    StopPreview();
+            };
         }
 
         private void btAdd_Click(object sender, EventArgs e)
@@ -61,31 +68,51 @@ namespace VideoServer.UserInterface
             this.Close();
         }
 
+        // preview state is kept here, not derived from the button caption
+        // (the caption was changed in the designer and the check stopped working)
+        bool previewing = false;
+
         private void btCheck_Click(object sender, EventArgs e)
         {
-            if (btCheck.Text == "<Перевірити>")
+            if (cbCameraType.SelectedIndex == -1)
+                return;
+
+            Camera camera = camers[cbCameraType.SelectedIndex];
+            try
             {
-                if (cbCameraType.SelectedIndex != -1)
+                if (!previewing)
                 {
-                    camers[cbCameraType.SelectedIndex].NewFrame += new CameraEventHandler(AddCameraForm_NewFrame);
-                    camers[cbCameraType.SelectedIndex].StartPreview();
-                    btCheck.Text = "<Відключити>";
+                    camera.NewFrame += new CameraEventHandler(AddCameraForm_NewFrame);
+                    camera.StartPreview();
+                    previewing = true;
+                    btCheck.Text = "Відключити";
                     cbCameraType.Enabled = false;
                     pnCameraForm.Enabled = false;
                 }
-               
-            }
-            else
-            {
-                if (cbCameraType.SelectedIndex != -1)
+                else
                 {
-                    camers[cbCameraType.SelectedIndex].Stop();
-                    camers[cbCameraType.SelectedIndex].NewFrame -= new CameraEventHandler(AddCameraForm_NewFrame);
-                    btCheck.Text = "<Перевірити>";
-                    cbCameraType.Enabled = true;
-                    pnCameraForm.Enabled = true;
+                    StopPreview();
                 }
             }
+            catch (Exception ex)
+            {
+                StopPreview();
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        void StopPreview()
+        {
+            if (cbCameraType.SelectedIndex != -1)
+            {
+                Camera camera = camers[cbCameraType.SelectedIndex];
+                camera.Stop();
+                camera.NewFrame -= new CameraEventHandler(AddCameraForm_NewFrame);
+            }
+            previewing = false;
+            btCheck.Text = "Перевірити";
+            cbCameraType.Enabled = true;
+            pnCameraForm.Enabled = true;
         }
 
         void AddCameraForm_NewFrame(object sender, Interfaces.CameraEventArgs e)
